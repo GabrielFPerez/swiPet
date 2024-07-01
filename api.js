@@ -217,10 +217,10 @@ exports.setApp = function (app, client) {
     // API to add new pets to specific users and update their listings to reflect the new pet
     app.post('/api/addpet', async (req, res) => {
 
-        // incoming: userLogin, petName, type, petAge, petGender, breed, petSize, bio, contactEmail, location, images
+        // incoming: userLogin, petName, type, petAge, petGender, color, breed, petSize, bio, contactEmail, location, images
         // outgoing: message, petId
 
-        const { userLogin, petName, type, petAge, petGender, breed, petSize, bio, contactEmail, location, images } = req.body;
+        const { userLogin, petName, type, petAge, petGender, color, breed, petSize, bio, contactEmail, location, images } = req.body;
         let message = '';
         let petId = null;
         try {
@@ -236,6 +236,7 @@ exports.setApp = function (app, client) {
                     Pet_Type: type,
                     Age: petAge,
                     Gender: petGender,
+                    Color: color,
                     Breed: breed,
                     Size: petSize,
                     Bio: bio,
@@ -356,6 +357,67 @@ exports.setApp = function (app, client) {
             message = e.toString();
         }
         const ret = { message: message };
+        res.status(200).json(ret);
+    });
+
+    // API for updating pet's information
+    app.post("/api/updatepet", async (req, res, next) => {
+        // incoming: userLogin, petId, petName, type, petAge, petGender, color, breed, petSize, bio, contactEmail, location, images
+        // outgoing: message
+
+        const { userLogin, petId, petName, type, petAge, petGender, color, breed, petSize, bio, contactEmail, location, images } = req.body;
+        let message = '';
+        try {
+            const db = client.db('swiPet');
+            const objectId = new ObjectId(petId);
+            const pet = await db.collection('Pets').findOne({ _id: objectId });
+
+            // Check to see if the pet is in the database
+            if (pet) {
+                // If the login provided is not the user who made the pet, they don't have permission
+                if (pet.Login !== userLogin) {
+                    message = "You do not have permission to update this pet";
+                } else {
+                    // Pet's updated fields
+                    let updatedPet = { 
+                        Pet_Name: petName,
+                        Pet_Type: type,
+                        Age: petAge,
+                        Gender: petGender,
+                        Color: color,
+                        Breed: breed,
+                        Size: petSize,
+                        Bio: bio,
+                        Contact_Email: contactEmail,
+                        Location: location,
+                        Images: images || []
+                    };
+
+                    // If fields are not included, it will have the previous information for those fields
+                    updatedPet = JSON.parse(JSON.stringify(updatedPet));
+
+                    // Update that pet information in the database
+                    const result = await db.collection('Pets').updateOne(
+                    { _id: objectId },
+                    { $set: updatedPet }
+                    );
+
+                    // Checks to see if anything was updated
+                    if (result.modifiedCount === 0) {
+                        message = "No changes made to the pet information";
+                    } else {
+                        message = "Pet information updated successfully";
+                    }
+                }
+            // If the petId is not a valid pet, show message
+            } else {
+                message = "Pet not found";
+            }
+        } catch (e) {
+            message = e.toString();
+        }
+
+        let ret = { message: message };
         res.status(200).json(ret);
     });
 
