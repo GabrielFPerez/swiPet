@@ -306,6 +306,47 @@ exports.setApp = function (app, client) {
         res.status(200).json(ret);
     });
 
+    // API to remove a pet from a user's favorites list
+    app.post('/api/unfavorite', async (req, res) => {
+        
+        // incoming: userLogin, petId
+        // outgoing: message
+
+        const { userLogin, petId } = req.body;
+        let message = '';
+        try {
+            // Connect to the database
+            const db = client.db(dbName);
+
+            // Check if the user exists
+            const user = await db.collection('User').findOne({ Login: userLogin });
+            if (user) {
+                const objectId = new ObjectId(petId);
+                
+                // Check if the pet is in the user's favorites list
+                // .some(favorite => favorite.equals(objectId)) checks the favorites array to see if there is any ObjectIds equal to the petId we input
+                const isFavorited = user.Favorites.some(favorite => favorite.equals(objectId));
+                if (isFavorited) {
+                    
+                    // If the pet is in the user's favorites list, remove the pet from the user's favorites list
+                    await db.collection('User').updateOne(
+                        { Login: userLogin },
+                        { $pull: { Favorites: objectId } }
+                    );
+                message = "Pet removed from favorites";
+                } else {
+                    message = "Pet is not in the favorites list";
+                }
+            } else {
+                message = "User does not exist";
+            }
+        } catch (e) {
+            message = e.toString();
+        }
+        const ret = { message: message };
+        res.status(200).json(ret);
+    });
+    
     // API to delete a pet and the listing of the original user who uploaded the pet (as well as from the favorites list of anyone who has that pet favorited)
     app.post('/api/deletepet', async (req, res) => {
 
@@ -360,7 +401,7 @@ exports.setApp = function (app, client) {
         res.status(200).json(ret);
     });
 
-    // API for updating pet's information
+    // API for updating a pet's information
     app.post("/api/updatepet", async (req, res, next) => {
         // incoming: userLogin, petId, petName, type, petAge, petGender, color, breed, petSize, bio, contactEmail, location, images
         // outgoing: message
@@ -370,7 +411,7 @@ exports.setApp = function (app, client) {
         try {
             const db = client.db(dbName);
             const objectId = new ObjectId(petId);
-            const pet = await db.collection('Pets').findOne({ _id: objectId });
+            const pet = await db.collection('Pet').findOne({ _id: objectId });
 
             // Check to see if the pet is in the database
             if (pet) {
@@ -397,7 +438,7 @@ exports.setApp = function (app, client) {
                     updatedPet = JSON.parse(JSON.stringify(updatedPet));
 
                     // Update that pet information in the database
-                    const result = await db.collection('Pets').updateOne(
+                    const result = await db.collection('Pet').updateOne(
                     { _id: objectId },
                     { $set: updatedPet }
                     );
@@ -420,5 +461,46 @@ exports.setApp = function (app, client) {
         let ret = { message: message };
         res.status(200).json(ret);
     });
+
+    // API to search for a pet depending on their characteristics listed in the incoming fields
+    app.post("/api/searchpet", async (req, res, next) => {
+        
+        // incoming: userLogin, type, petAge, petGender, breed, petSize, location
+        // outgoing: matching pets
+        
+        const { userLogin, type, petAge, petGender, breed, petSize, location } = req.body;
+        let message = '';
+        try {
+            
+            // Connect to the database
+            const db = client.db(dbName);
+            
+            // Make a search variable where it will take in all the fields inputted, if a field is not inputted, it will not affect the search
+            // Makes sure the user logged in will not see their listed pets
+            let search = { Login: { $ne: userLogin}};
+            if (type != null) search.Pet_Type = type;
+            if (petAge != null) search.Age = petAge;
+            if (petGender != null) search.Gender = petGender;
+            if (breed != null) search.Breed = breed;
+            if (petSize != null) search.Size = petSize;
+            if (location != null) search.Location = location;
+
+            // Perform the search using the inputted fields
+            const pets = await db.collection('Pet').find(search).toArray();
+
+            // If there are no pets that fit the criteria, message will be no pets found
+            if (pets.length === 0){
+                message = "No pets found";
+
+            // If there were pets found, message will show that pets were found
+            } else {
+                message = "Pet(s) found";
+            }
+        } catch (e) {
+            message = e.toString();
+        }
+        // Prints out all pets found with those fields and success message
+        res.status(200).json({ pets: pets, message: message });
+    }); 
 
 }
