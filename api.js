@@ -368,7 +368,7 @@ exports.setApp = function (app, client) {
         const { userLogin, petId, petName, type, petAge, petGender, color, breed, petSize, bio, contactEmail, location, images } = req.body;
         let message = '';
         try {
-            const db = client.db('swiPet');
+            const db = client.db(dbName);
             const objectId = new ObjectId(petId);
             const pet = await db.collection('Pets').findOne({ _id: objectId });
 
