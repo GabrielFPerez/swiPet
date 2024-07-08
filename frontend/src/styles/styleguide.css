@@ -1,0 +1,35 @@
+:root {
+    --black: rgba(0, 0, 0, 1);
+    --body-text-font-family: "DM Sans", Helvetica;
+    --body-text-font-size: 17px;
+    --body-text-font-style: normal;
+    --body-text-font-weight: 400;
+    --body-text-letter-spacing: 0px;
+    --body-text-line-height: normal;
+    --coral: rgba(242, 162, 155, 1);
+    --hidden: rgba(255, 255, 255, 0.5);
+    --lavender: rgba(242, 216, 238, 1);
+    --light-coral: rgba(242, 196, 179, 1);
+    --light-pink: rgba(242, 145, 163, 1);
+    --main-font-font-family: "Libre Baskerville", Helvetica;
+    --main-font-font-size: 12px;
+    --main-font-font-style: normal;
+    --main-font-font-weight: 400;
+    --main-font-letter-spacing: 0px;
+    --main-font-line-height: normal;
+    --pink: rgba(242, 136, 164, 1);
+    --smaller-body-font-family: "DM Sans", Helvetica;
+    --smaller-body-font-size: 14px;
+    --smaller-body-font-style: normal;
+    --smaller-body-font-weight: 400;
+    --smaller-body-letter-spacing: 0px;
+    --smaller-body-line-height: normal;
+    --tags-font-family: "DM Sans", Helvetica;
+    --tags-font-size: 12px;
+    --tags-font-style: normal;
+    --tags-font-weight: 400;
+    --tags-letter-spacing: 0px;
+    --tags-line-height: normal;
+    --white: rgba(255, 255, 255, 1);
+  }
+  

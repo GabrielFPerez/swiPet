@@ -1,0 +1,104 @@
+/* src/components/Navbar.css */
+.navbar {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px 0;
+    z-index: 1000; /* Ensure it stays above other content */
+    background-image: url(../backgrounds/login-background.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    padding: 10px 0;
+}
+
+.navbar-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+  }
+  
+  .navbar-menu-button button,
+  .navbar-register-button button {
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .navbar-register-button button {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .navbar-register-button button {
+    padding: 5px 10px;
+    border-radius: 4px;
+  }
+  
+  .navbar-logo {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    position: relative;
+  }
+  
+  .navbar-logo svg {
+    width: 65px;
+    height: 60px;
+    padding-left: 90px;
+  }
+
+  .navbar-menu-button svg {
+    width: 40px;
+    height: 25px;
+  }
+
+  .create-account {
+    align-items: center;
+    background-color: #f2a29b;
+    border-radius: 100px;
+    display: flex;
+    gap: 8px;
+    height: 30px;
+    justify-content: center;
+    padding: 14px 24px;
+    position: relative;
+    width: 130px;
+    }
+
+    .navbar-register-icon svg {
+      background-color: var(--light-coral);
+      height: 58px;
+      width: 158px;
+    }
+
+    .create-account {
+      position: relative; /* Ensure positioning context for absolutely positioned elements */
+      display: flex; /* Ensures the div only takes up necessary space */
+      width: auto; /* Adjust as per your design */
+      height: auto; /* Adjust as per your design */
+    }
+    
+    .create-account button {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 0; /* Optional: Remove default padding */
+      margin: 0; /* Optional: Remove default margin */
+      border: none; /* Optional: Remove default border */
+      background: transparent; /* Ensure button doesn't overlay other content */
+      cursor: pointer; /* Ensure cursor shows as pointer */
+    }
+
+    .text-wrapper {
+      font-weight: 500;
+      font-size: larger;
+    }
+    
+
+
+  

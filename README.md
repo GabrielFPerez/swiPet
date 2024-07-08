@@ -1,17 +1,10 @@
-# swipet_mobile
+# swiPet
+An app to helps you find your perfect pet match!
+Adopt today!
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# swipet_mobile
+<li><b>Front-End:</b> <a href="https://github.com/clarencevgomez" target="_blank">Clarence Gomez</a> </li>
+  <li><b>Front-End:</b> <a href="https://github.com/lukesan48" target="_blank">Luke Samuel Sandoval</a> </li>
+  <li><b>Database:</b> <a href="https://github.com/GabrielFPerez" target="_blank">Gabriel Perez</a> </li>
+  <li><b>API/PM:</b> <a href="https://github.com/tm1273" target="_blank">Tony Mai</a></li>
+  <li><b>API:</b><a href="https://github.com/AnimeKay" target="_blank">Matthew Chen</a></li>
+  <ul>

@@ -1,0 +1,20 @@
+body {
+    margin: 0;
+    font-family: var(--main-font-font-family);
+  }
+  
+  code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+      monospace;
+  }
+
+@font-face {
+    font-family: "Libre Baskerville";
+    src: url(../fonts/LibreBaskerville-Regular.ttf);
+}
+
+@font-face {
+    font-family: "DM Sans";
+    src: url(../fonts/DMSans-VariableFont_opsz\,wght.ttf);
+}
+  

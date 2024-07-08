@@ -1,0 +1,80 @@
+.login-page-footer {
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .login-page-footer .login-page-v-footer {
+    background-color: #ffffff;
+    height: 1024px;
+    overflow: hidden;
+    position: relative;
+    width: 1440px;
+  }
+  
+  .login-page-footer .rectangle {
+    height: 1164px;
+    left: -25666px;
+    position: absolute;
+    top: 2835px;
+    width: 1806px;
+  }
+  
+  .login-page-footer .overlap-group {
+    height: 1024px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 1440px;
+  }
+  
+  .login-page-footer .ellipse {
+    height: 800px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 954px;
+  }
+  
+  .login-page-footer .img {
+    height: 1024px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 754px;
+  }
+  
+  .login-page-footer .ellipse-2 {
+    height: 576px;
+    left: 0;
+    position: absolute;
+    top: 448px;
+    width: 1440px;
+  }
+  
+  .login-page-footer .ellipse-3 {
+    height: 1024px;
+    left: 171px;
+    position: absolute;
+    top: 0;
+    width: 1269px;
+  }
+  
+  .login-page-footer .frame {
+    height: 508px;
+    left: 357px;
+    position: absolute;
+    top: 208px;
+    width: 739px;
+  }
+  
+  .login-page-footer .footer-body {
+    height: 224px;
+    left: 0;
+    position: absolute;
+    top: 800px;
+    width: 1440px;
+  }
+  
