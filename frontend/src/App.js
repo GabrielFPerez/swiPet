@@ -8,6 +8,7 @@ import { BrowserRouter, Route, Switch, Routes} from 'react-router-dom';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import LandingPage from './pages/LandingPage';
 import ProfilePage from './pages/ProfilePage';
+import SwipingPage from './pages/SwipingPage';
 
 function App() 
 {
@@ -19,6 +20,7 @@ function App()
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/swipe" element={<SwipingPage />} />
 
       </Routes>
     </BrowserRouter>

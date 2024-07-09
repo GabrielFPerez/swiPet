@@ -1,5 +1,7 @@
 const bcrypt = require('bcrypt');
 const { ObjectId } = require('mongodb');
+const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
 require('mongodb');
 require('express');
 
@@ -11,42 +13,51 @@ exports.setApp = function (app, client) {
 
     // Modified login api
     app.post('/api/login', async (req, res, next) => {
-        try {
-            console.log('Login attempt received:', req.body);
-    
-            let ret = {};
-            let message = '';
-            const { login, password } = req.body;
-    
-            const db = client.db(dbName);
-            console.log('Attempting to find user:', login);
-            const user = await db.collection('User').findOne({ Login: login });
-    
-            if (user) {
-                console.log('User found:', user.Login);
+        // incoming: login, password
+        // outgoing: id, firstName, lastName, error
+
+        // Need to initialize ret outside of
+        // conditional statements...
+        let ret = {};
+
+        let message = '';
+
+        const { login, password } = req.body;
+
+        // Same dbName here
+        const db = client.db(dbName);
+        const user = await db.collection('User').findOne({ Login: login });
+
+        // A user's login is found
+        if (user) {
+
+            // Check to see if email verified
+            if (user.Verified) {
                 const passwordMatch = await bcrypt.compare(password, user.Password);
-    
+
+                // Password matches
                 if (passwordMatch) {
-                    console.log('Password match successful');
                     ret = { id: user._id, firstName: user.FirstName, lastName: user.LastName, message: message };
-                } else {
-                    console.log('Password match failed');
+                }
+
+                // Password doesn't match
+                else {
                     message = "Invalid credentials";
                     ret = { message: message };
                 }
             } else {
-                console.log('User not found');
-                message = "User not found";
+                message = "Please verify your email before logging in";
                 ret = { message: message };
             }
-    
-            console.log('Sending response:', ret);
-            res.status(200).json(ret);
-    
-        } catch (e) {
-            console.error('Login error:', e);
-            res.status(500).json({ message: 'Server error', error: e.message });
+
         }
+        // User's login not found
+        else {
+            message = "User not found";
+            ret = { message: message };
+        }
+
+        res.status(200).json(ret);
     });
 
 
@@ -150,11 +161,48 @@ exports.setApp = function (app, client) {
 
     // Forgot password api
     app.post("/api/forgotPassword", async (req, res, next) => {
+        // incoming: login, email, newPassword
+        // outgoing: newPassword
+        const { login, email, newPassword } = req.body;
+        let message = '';
 
+        const db = client.db(dbName);
+        const collection = db.collection('User');
+
+        // Find based off email AND login, incase same email
+        let user = await collection.findOne({ Login: login, Email: email });
+        // console.log(user);
+
+        if (user) {
+            if (user.Verified) {
+                // Make sure to hash new password
+                const saltRounds = 12;
+                const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+                // Filter based off login, since unique
+                const result = await collection.updateOne(
+                    { Login: login },
+                    { $set: { Password: hashedPassword } }
+                );
+
+                message = 'Password updated successfully';
+            }
+            else {
+                message = 'Please verify your email before changing password';
+            }
+        }
+        else {
+            message = 'No such login/email';
+        }
+
+
+        let ret = { message: message };
+        res.status(200).json(ret);
     });
 
     // Register api
-    // Need to implement password hashing via bcrypt - to do
+    // Need to implement password hashing via bcrypt - done
+    // Need to implement email verification - done
     app.post("/api/register", async (req, res, next) => {
         // incoming: firstName, lastName, login, password
         // outgoing: id, firstName, lastName, email, message
@@ -197,11 +245,40 @@ exports.setApp = function (app, client) {
                     Login: login,
                     Password: hashedPassword,
                     Favorites: {},
-                    Listings: {}
+                    Listings: {},
+                    Verified: false
                 };
 
                 const result = await db.collection('User').insertOne(newUser);
                 id = result.insertedId;
+
+                // Generate email verification token
+                const token = jwt.sign({ userId: id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+                // Setting up email for sending verification...
+                const transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: process.env.EMAIL_USER,
+                        // Google's app password, not actual
+                        // password
+                        pass: process.env.EMAIL_PASS
+                    }
+                });
+
+                // The email itself
+                const mailOptions = {
+                    from: process.env.EMAIL_USER,
+                    to: email,
+                    subject: 'Email Verification for swiPet',
+                    // website format: http://domain/api/verify-email?token=${token}
+                    // in this case locally since testing
+                    // Need to use backtick here for ${token}
+                    text: `Please verfiy your swiPet account by clicking on the follow link... http://localhost:5000/api/verifyEmail?token=${token}`
+                };
+
+                await transporter.sendMail(mailOptions);
+                message = "Registration successful. Proceed to verify email."
             }
 
         } catch (e) {
@@ -210,6 +287,35 @@ exports.setApp = function (app, client) {
 
         // probably dont want  to return login and password here...
         let ret = { id: id, firstName: firstName, lastName: lastName, email: email, message: message }
+        res.status(200).json(ret);
+    });
+
+    // verify email api
+    app.get('/api/verifyEmail', async (req, res, next) => {
+        const { token } = req.query;
+        const db = client.db(dbName);
+
+        let message;
+
+        try {
+
+            // Decode token and get userId from it
+            const decodedToken= jwt.verify(token, process.env.JWT_SECRET);
+            const userId = decodedToken.userId;
+
+            // Find userId and edit Verified boolean
+            // Need new ObjectId here
+            await db.collection('User').updateOne(
+                { _id: new ObjectId(userId) },
+                { $set: { Verified: true } }
+            );
+
+            message = 'Email verified successfully';
+        } catch (e) {
+            message = 'Invalid or expired token';
+        }
+
+        ret = { message : message };
         res.status(200).json(ret);
     });
 

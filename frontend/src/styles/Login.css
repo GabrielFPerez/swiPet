@@ -10,11 +10,9 @@
     padding: 20px 100px 40px; /* Adjust padding to bring in the sides */
     max-width: 400px; /* Limit maximum width to prevent it from spanning too wide */
     margin: 10% auto; /* Center the div horizontally and provide vertical margin */
-}
-
-#login-text {
     font-family: var(--main-font-font-family);
     color: rgb(51, 51, 51);
+    margin-bottom: 0px;
 }
 
 #login-header {

@@ -1,6 +1,6 @@
 // src/components/Navbar.js
 import React from 'react';
-import '../styles/Navbar.css';
+import '../styles/LoggedinNavBar.css';
 import { ReactComponent as Logo} from '../icons/logo.svg'
 import { ReactComponent as MenuIcon} from '../icons/menu-icon.svg'
 import { ReactComponent as Register} from '../icons/emergency-exit.svg'

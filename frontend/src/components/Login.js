@@ -44,7 +44,7 @@ function Login() {
                 var user = { firstName: res.firstName, lastName: res.lastName, id: res.id };
                 localStorage.setItem('user_data', JSON.stringify(user));
                 setMessage('');
-                window.location.href = '/profile';
+                window.location.href = '/swipe';
             } else {
                 setMessage(res.message || 'Login failed');
             }
@@ -56,44 +56,44 @@ function Login() {
 
     return (
         <div id="loginDiv">
-            <div id="login-text">
-                <div id="login-header">
-                    <LoginCat />
-                    <span id="inner-title">Login</span><br />
-                </div><br/>
+            <div id="login-header">
+                <LoginCat />
+                <span id="inner-title">Login</span><br />
+            </div><br/>
 
-                <div id="username-box">
-                    <span id="username-title">Username</span><br />
-                    <input 
-                        type="text" 
-                        id="loginName"
-                        value={loginName}
-                        onChange={(e) => setLoginName(e.target.value)}
-                    /><br/>
-                </div>
-                
-                <div id="password-box">
-                    <span id="password-title">Password</span><br />
-                    <input 
-                        type="password" 
-                        id="loginPassword"
-                        value={loginPassword}
-                        onChange={(e) => setLoginPassword(e.target.value)}
-                    />
-                </div><br/>
-                
+            <div id="username-box">
+                <span id="username-title">Username</span><br />
                 <input 
-                    type="submit" 
-                    id="loginButton" 
-                    className="buttons" 
-                    value="Login"
-                    onClick={doLogin} 
-                />
-                <br/>
-                <span id="loginResult">{message}</span>
-
-                <p><Link to="/forgotpassword">Forgot your password?</Link></p>
+                    type="text" 
+                    id="loginName"
+                    aria-label="username"
+                    value={loginName}
+                    onChange={(e) => setLoginName(e.target.value)}
+                /><br/>
             </div>
+                
+            <div id="password-box">
+                <span id="password-title">Password</span><br />
+                <input 
+                    type="password" 
+                    id="loginPassword"
+                    aria-label="password"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                />
+            </div><br/>
+                
+            <input 
+                type="submit" 
+                id="loginButton" 
+                className="buttons" 
+                value="Login"
+                onClick={doLogin} 
+            />
+            <br/>
+            <span id="loginResult">{message}</span>
+
+            <p><Link to="/forgotpassword">Forgot your password?</Link></p>
         </div>
     );
 }

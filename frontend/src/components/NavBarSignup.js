@@ -26,7 +26,7 @@ const Navbar = () => {
         </div>
         <div className="create-account">
           <div className="text-wrapper">Login</div>
-          <button onClick={goToLoginPage}></button>
+          <button id="register-button" aria-label="Signup Button" onClick={goToLoginPage}></button>
           <Register style={{ width: '19px', height: '19px' }} />
         </div>
       </div>

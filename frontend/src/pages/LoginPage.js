@@ -2,8 +2,8 @@ import React from 'react';
 
 import NavBarLogin from '../components/NavBarLogin';
 import Login from '../components/Login';
-import Footer from '../components/Footer';
 import "../styles/LoginPage.css"
+import Footer from '../components/Footer';
 
 const LoginPage = () =>
 {

@@ -4,14 +4,12 @@ const cors = require('cors');
 
 const path = require('path');
 
-const PORT = process.env.PORT || 3001;
-
-let dbName = 'swiPet';
+const PORT = process.env.PORT || 3000;
 
 
 const app = express();
 
-app.set('port', (process.env.PORT || 3001));
+app.set('port', (process.env.PORT || 3000));
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -19,34 +17,18 @@ app.use(bodyParser.json());
 
 require('dotenv').config();
 const url = process.env.MONGODB_URI;
-
-const MongoClient = require('mongodb').MongoClient;
+const MongoClient = require('mongodb').MongoClient; //you might already have this.
 const client = new MongoClient(url);
+client.connect();
 
-async function connectToDatabase() {
-    try {
-        await client.connect();
-        console.log('Connected successfully to MongoDB');
-        const db = client.db(dbName);
-        // Perform a simple query to test the connection
-        const result = await db.command({ ping: 1 });
-        console.log("MongoDB connection test result:", result);
-    } catch (e) {
-        console.error('MongoDB connection error:', e);
-    }
-}
-
-connectToDatabase();
-
-const api = require('./api.js');
+var api = require('./api.js');
 api.setApp(app, client);
 
-app.use((req, res, next) => {
-    console.log('Received request:', req.method, req.url);
-    next();
-  });
 
 
+app.listen(PORT, () => {
+    console.log('Server listening on port ' + PORT);
+});
 
 // Add the following for the correct retrieval path -
 // For Heroku deployment
@@ -61,7 +43,3 @@ if (process.env.NODE_ENV === 'production') {
         res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
     });
 }
-
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
