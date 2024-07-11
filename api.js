@@ -280,7 +280,7 @@ exports.setApp = function (app, client) {
                     from: process.env.EMAIL_USER,
                     to: email,
                     subject: 'Email Verification for swiPet',
-                    text: `Please verify your swiPet account by clicking on the following link: ${APP_URL}/api/verifyEmail?token=${token}`
+                    text: `Please verify your swiPet account by clicking on the following link: https://swipet-becad9ab7362.herokuapp.com/api/verifyEmail?token=${token}`
                 };
 
                 await transporter.sendMail(mailOptions);
