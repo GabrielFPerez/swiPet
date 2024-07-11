@@ -7,7 +7,7 @@ import '../styles/FooterLoggedin.css'
 function FooterLoggedin()
 {
     return( 
-        <div className="footer-container">
+        <div className="footerlogged-container">
             <div className="left-side-container">
                 <div className="logo"> <SwipetLogo /> </div>
                 

@@ -5,11 +5,20 @@ const jwt = require('jsonwebtoken');
 require('mongodb');
 require('express');
 
+const getAppUrl = () => {
+    if (process.env.NODE_ENV === 'production') {
+        return process.env.PRODUCTION_URL || 'https://swipet-becad9ab7362.herokuapp.com';
+    } else {
+        return process.env.DEVELOPMENT_URL || 'http://localhost:3001';
+    }
+};
+
 exports.setApp = function (app, client) {
 
     // Put database name here, so can use to specify
     // database to be used
     const dbName = 'swiPet';
+    const APP_URL = getAppUrl();
 
     // Modified login api
     app.post('/api/login', async (req, res, next) => {
@@ -271,10 +280,7 @@ exports.setApp = function (app, client) {
                     from: process.env.EMAIL_USER,
                     to: email,
                     subject: 'Email Verification for swiPet',
-                    // website format: http://domain/api/verify-email?token=${token}
-                    // in this case locally since testing
-                    // Need to use backtick here for ${token}
-                    text: `Please verfiy your swiPet account by clicking on the follow link... http://localhost:5000/api/verifyEmail?token=${token}`
+                    text: `Please verify your swiPet account by clicking on the following link: ${APP_URL}/api/verifyEmail?token=${token}`
                 };
 
                 await transporter.sendMail(mailOptions);
@@ -294,29 +300,57 @@ exports.setApp = function (app, client) {
     app.get('/api/verifyEmail', async (req, res, next) => {
         const { token } = req.query;
         const db = client.db(dbName);
-
+    
         let message;
-
+        let isVerified = false;
+    
         try {
-
             // Decode token and get userId from it
-            const decodedToken= jwt.verify(token, process.env.JWT_SECRET);
+            const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
             const userId = decodedToken.userId;
-
+    
             // Find userId and edit Verified boolean
-            // Need new ObjectId here
-            await db.collection('User').updateOne(
+            const result = await db.collection('User').updateOne(
                 { _id: new ObjectId(userId) },
                 { $set: { Verified: true } }
             );
-
-            message = 'Email verified successfully';
+    
+            if (result.modifiedCount > 0) {
+                message = 'Email verified successfully';
+                isVerified = true;
+            } else {
+                message = 'Email already verified or user not found';
+            }
         } catch (e) {
             message = 'Invalid or expired token';
         }
-
-        ret = { message : message };
-        res.status(200).json(ret);
+    
+        // Render an HTML response
+        const htmlResponse = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Email Verification</title>
+            <style>
+                body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+                .container { text-align: center; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+                .success { color: green; }
+                .error { color: red; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>${isVerified ? 'Email Verified' : 'Verification Failed'}</h1>
+                <p class="${isVerified ? 'success' : 'error'}">${message}</p>
+                <a href="${APP_URL}">Return to swiPet</a>
+            </div>
+        </body>
+        </html>
+        `;
+    
+        res.send(htmlResponse);
     });
 
     // API to add new pets to specific users and update their listings to reflect the new pet

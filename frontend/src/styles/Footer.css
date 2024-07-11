@@ -1,6 +1,8 @@
 .footer {
     position: relative;
     z-index: 2;
+    background-image: none;
+
 }
 
 .footer-container {
@@ -11,6 +13,7 @@
     bottom: 0;
     left: 0;
     right: 0;
+    background-image: none;
 }
 
 .left-side-container {

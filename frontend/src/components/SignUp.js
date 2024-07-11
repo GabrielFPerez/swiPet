@@ -8,10 +8,10 @@ function SignUp() {
     const app_name = 'swipet-becad9ab7362';
 
     function buildPath(route) {
-        if (process.env.NODE_ENV == 'production') {
-            return 'https://' + app_name + '.herokuapp.com/' + route;
+        if (process.env.NODE_ENV === 'production') {
+            return 'https://' + app_name + '.herokuapp.com' + route;
         } else {
-            return 'http://localhost:3001/' + route;
+            return 'http://localhost:3001' + route;
         }
     }
 
@@ -78,42 +78,42 @@ function SignUp() {
 
                 <div id="username-box">
                     <span id="signup-title">First Name</span><br />
-                    <input type="text" aria-label="firstname" id="firstname" /><br />
+                    <input type="text" id="firstname" /><br />
                 </div>
 
                 <div id="username-box">
                     <span id="signup-title">Last Name</span><br />
-                    <input type="text" aria-label="lastname" id="lastname" /><br />
+                    <input type="text" id="lastname" /><br />
                 </div>
 
                 <div id="username-box">
                     <span id="signup-title">Username</span><br />
-                    <input type="text" aria-label="username" id="login" /><br />
+                    <input type="text" id="login" /><br />
                 </div>
 
                 <div id="username-box">
                     <span id="signup-title">Email Address</span><br />
-                    <input type="text" aria-label="email" id="email" /><br />
+                    <input type="text" id="email" /><br />
                 </div>
 
                 <div id="username-box">
                     <span id="signup-title">Phone Number</span><br />
-                    <input type="text" aria-label="phonenumber" id="phonenumber" /><br />
+                    <input type="text" id="phonenumber" /><br />
                 </div>
 
                 <div id="username-box">
                     <span id="signup-title">Location</span><br />
-                    <input type="text" aria-label="location" id="location" /><br />
+                    <input type="text" id="location" /><br />
                 </div>
                 
                 <div id="password-box">
                 <span id="signup-title">Password</span><br />
-                <input type="password" aria-label="password" id="registerpassword" /><br />
+                <input type="password" id="registerpassword" /><br />
                 </div>
                 
                 <div id="password-box">
                 <span id="signup-title">Confirm Password</span><br />
-                <input type="password" aria-label="confirmpassword" id="confirmpassword" /><br />
+                <input type="password" id="confirmpassword" /><br />
                 </div>
 
                 {error && <div className="error-message">{error}</div>}

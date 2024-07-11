@@ -4,12 +4,12 @@ const cors = require('cors');
 
 const path = require('path');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 
 const app = express();
 
-app.set('port', (process.env.PORT || 3000));
+app.set('port', (process.env.PORT || 3001));
 
 app.use(cors());
 app.use(bodyParser.json());
