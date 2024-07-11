@@ -1,7 +1,7 @@
 import React from 'react'
 import NavBar from '../components/LoggedinNavBar'
 import FooterLoggedin from '../components/FooterLoggedin'
-import PetCard from '../components/PetCard'
+import Cards from '../components/CardContainer'
 
 const SwipingPage = () =>
     {
@@ -9,6 +9,7 @@ const SwipingPage = () =>
         return(
           <div>
             <NavBar />
+            <Cards />
             <FooterLoggedin />
           </div>
         );
