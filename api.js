@@ -498,4 +498,48 @@ exports.setApp = function (app, client) {
         res.status(200).json(ret);
     });
 
-}
+    // New getAllPets endpoint that also functions as a search endpoint
+    app.get('/api/getAllPets', async (req, res) => {
+        const {
+            petName,
+            type,
+            minAge,
+            maxAge,
+            gender,
+            breed,
+            size,
+            location
+        } = req.query;
+
+        let query = {};
+
+        if (petName) query["Pet Name"] = { $regex: petName, $options: 'i' };
+        if (type) query["Animal Type"] = { $regex: type, $options: 'i' };
+        if (gender) query.Gender = { $regex: gender, $options: 'i' };
+        if (breed) query.Breed = { $regex: breed, $options: 'i' };
+        if (size) query["Pet Size"] = { $regex: size, $options: 'i' };
+        if (location) query.Location = { $regex: location, $options: 'i' };
+
+        if (minAge || maxAge) {
+            query["Pet Age"] = {};
+            if (minAge) query["Pet Age"].$gte = parseInt(minAge);
+            if (maxAge) query["Pet Age"].$lte = parseInt(maxAge);
+        }
+
+        console.log('Query:', query);
+
+        let pets = [];
+        let message = '';
+
+        try {
+            const db = client.db(dbName);
+            pets = await db.collection('Pet').find(query).toArray();
+            message = pets.length > 0 ? `${pets.length} pets found` : 'No pets found matching the criteria';
+        } catch (e) {
+            message = 'Error occurred while fetching pets: ' + e.toString();
+        }
+
+        res.status(200).json({ pets, message });
+    });
+};
+
