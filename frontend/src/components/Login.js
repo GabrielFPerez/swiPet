@@ -1,21 +1,15 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import '../styles/Login.css'
-import { ReactComponent as LoginCat } from '../icons/login-cat.svg'
+import '../styles/Login.css';
+import { ReactComponent as LoginCat } from '../icons/login-cat.svg';
+import { jwtDecode } from "jwt-decode";
 
 function Login() {
     const [loginName, setLoginName] = useState('');
     const [loginPassword, setLoginPassword] = useState('');
     const [message, setMessage] = useState('');
-    const app_name = 'swipet-becad9ab7362';
-
-    function buildPath(route) {
-        if (process.env.NODE_ENV == 'production') {
-            return 'https://' + app_name + '.herokuapp.com/' + route;
-        } else {
-            return 'http://localhost:3001/' + route;
-        }
-    }
+    
+    var bp = require('./Path.js');
 
     const doLogin = async (event) => {
         event.preventDefault();
@@ -28,24 +22,42 @@ function Login() {
 
 
         try {
-            const response = await fetch(buildPath('api/login'), {
+            const response = await fetch(bp.buildPath('api/login'), {
                 method: 'POST',
                 body: js,
                 headers: { 'Content-Type': 'application/json' }
             });
 
+            let res = JSON.parse(await response.text());
+            const { jwtToken } = res;
+            
+            console.log("Received JWT:", jwtToken);
+
+            if (!jwtToken) {
+                throw new Error("No JWT token received");
+            }
+            
+
+
+            const decoded = jwtDecode(jwtToken, {complete: true});
+            console.log("Decoded JWT:", decoded);
+            
+
+            let userID = decoded.userId;
+            let FirstName = decoded.firstName;
+            let LastName = decoded.lastName;
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const res = await response.json();
-
-            if (res.id) {
-                var user = { firstName: res.firstName, lastName: res.lastName, id: res.id };
+            if (userID) {
+                var user = { FirstName: FirstName, LastName: LastName, userID: userID };
                 localStorage.setItem('user_data', JSON.stringify(user));
                 setMessage('');
                 window.location.href = '/swipe';
             } else {
+                console.log("userID is invalid:", userID);
                 setMessage(res.message || 'Login failed');
             }
         } catch (e) {
