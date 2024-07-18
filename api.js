@@ -749,7 +749,7 @@ exports.setApp = function (app, client) {
         let message = '';
         
         if (token.isExpired(jwtToken)) {
-            let ret = { message: 'The JWT is no longer valid', jwtToken: '' };
+            let ret = { message: 'The JWT is no longer valid', jwtToken: jwtToken };
             res.status(200).json(ret);
             return;
         }
