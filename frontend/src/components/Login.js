@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import '../styles/Login.css';
 import { ReactComponent as LoginCat } from '../icons/login-cat.svg';
 import { jwtDecode } from "jwt-decode";
+import tokenStorage from '../tokenStorage.js';
 
 function Login() {
     const [loginName, setLoginName] = useState('');
@@ -14,7 +15,7 @@ function Login() {
     const doLogin = async (event) => {
         event.preventDefault();
 
-        var obj = { login: loginName, password: loginPassword };
+        var obj = { userLogin: loginName, password: loginPassword };
         var js = JSON.stringify(obj);
 
         const url = '/api/login';
@@ -36,6 +37,9 @@ function Login() {
             if (!jwtToken) {
                 throw new Error("No JWT token received");
             }
+
+            //let storage = require('../tokenStorage.js');
+            tokenStorage.storeToken(jwtToken);
             
 
 
@@ -46,13 +50,14 @@ function Login() {
             let userID = decoded.userId;
             let FirstName = decoded.firstName;
             let LastName = decoded.lastName;
+            let username = decoded.username;
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             if (userID) {
-                var user = { FirstName: FirstName, LastName: LastName, userID: userID };
+                var user = { FirstName: FirstName, LastName: LastName, userID: userID, username: username};
                 localStorage.setItem('user_data', JSON.stringify(user));
                 setMessage('');
                 window.location.href = '/swipe';

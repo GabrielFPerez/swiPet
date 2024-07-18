@@ -4,21 +4,16 @@ const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 require('mongodb');
 require('express');
-
-const getAppUrl = () => {
-    if (process.env.NODE_ENV === 'production') {
-        return process.env.PRODUCTION_URL || 'https://swipet-becad9ab7362.herokuapp.com';
-    } else {
-        return process.env.DEVELOPMENT_URL || 'http://localhost:3001';
-    }
-};
+const allowedColors = ["Brown", "Black", "White","Gold", "Gray", "Red", "Yellow", "Blue", "Orange", "Purple", "Green" ];
 
 exports.setApp = function (app, client) {
 
     // Put database name here, so can use to specify
     // database to be used
     const dbName = 'swiPet';
-    const APP_URL = getAppUrl();
+
+    // JWT 'middleware'
+    const token = require('./createJWT.js');
 
     // Modified login api
     app.post('/api/login', async (req, res, next) => {
@@ -31,22 +26,34 @@ exports.setApp = function (app, client) {
 
         let message = '';
 
-        const { login, password } = req.body;
+        const { userLogin, password } = req.body;
 
         // Same dbName here
         const db = client.db(dbName);
-        const user = await db.collection('User').findOne({ Login: login });
+        const user = await db.collection('User').findOne({ username: userLogin });
 
         // A user's login is found
         if (user) {
 
             // Check to see if email verified
-            if (user.Verified) {
-                const passwordMatch = await bcrypt.compare(password, user.Password);
+            if (!user.Verified) {
+                message = "Please verify your email before logging in";
+                ret = { message: message };
+            } else {
+                const passwordMatch = await bcrypt.compare(password, user.password);
 
                 // Password matches
                 if (passwordMatch) {
-                    ret = { id: user._id, firstName: user.FirstName, lastName: user.LastName, message: message };
+                    // Create JWT
+                    let jwtToken = token.createToken(user.firstName, user.lastName, user._id, user.username);
+
+                    // // jwt testing
+                    // const decodedToken = jwt.decode(jwtToken.accessToken, { complete: true });
+                    // console.log(decodedToken);
+
+                    //ret = { id: user._id, firstName: user.firstName, lastName: user.lastName, username: user.username, jwtToken: jwtToken.accessToken, message: message };
+                    ret = { jwtToken: jwtToken.accessToken, message: message };
+
                 }
 
                 // Password doesn't match
@@ -54,9 +61,6 @@ exports.setApp = function (app, client) {
                     message = "Invalid credentials";
                     ret = { message: message };
                 }
-            } else {
-                message = "Please verify your email before logging in";
-                ret = { message: message };
             }
 
         }
@@ -72,12 +76,18 @@ exports.setApp = function (app, client) {
 
     // Delete user api; should delete user from database...
     app.post("/api/deleteUser", async (req, res, next) => {
-        // incoming: login, password
+        // incoming: login, password, jwtToken
         // outgoing: message
 
         let message = "";
 
-        const { login, password } = req.body;
+        const { userLogin, password, jwtToken } = req.body;
+
+        // JWT
+        if (token.isExpired(jwtToken)) {
+            res.status(200).json({ message: 'The JWT is invalid' });
+            return;
+        }
 
         const db = client.db(dbName);
 
@@ -85,12 +95,12 @@ exports.setApp = function (app, client) {
             // Search for user
             // Since hashing password, search for login only
             // password will be checked later
-            const user = await db.collection("User").findOne({ Login: login });
+            const user = await db.collection("User").findOne({ username: userLogin });
 
             // If user is found... cast delete user!
             if (user) {
                 // Compare password and hashed password in database
-                const passwordMatch = bcrypt.compare(password, user.Password);
+                const passwordMatch = await bcrypt.compare(password, user.password);
 
                 // If passwords match... cast delete
                 if (passwordMatch) {
@@ -109,7 +119,10 @@ exports.setApp = function (app, client) {
             message = e.toString();
         }
 
-        let ret = { message: message };
+        // Refresh JWT
+        let refreshedToken = token.refresh(jwtToken);
+
+        let ret = { message: message, jwtToken: refreshedToken };
         res.status(200).json(ret);
     });
 
@@ -117,19 +130,33 @@ exports.setApp = function (app, client) {
     app.post("/api/updateUser", async (req, res, next) => {
         // incoming: login, firstName, lastName, email, phoneNumber, location
         // outgoing: (new/same - firstName, lastName, email, phoneNumber, location), message
-        const { login, firstName, lastName, email, phoneNumber, location } = req.body;
+        const { userLogin, firstName, lastName, email, phoneNumber, location, jwtToken } = req.body;
 
         let message = '';
+        let newJwtToken = jwtToken;
+        let ret = { message: message, jwtToken: newJwtToken };
+
+        if (token.isExpired(jwtToken)) {
+            ret.message = 'The JWT is no longer valid';
+            ret.jwtToken = '';
+            res.status(200).json(ret);
+            return;
+        }
+
+        // // jwt testing
+        // const decodedToken = jwt.decode(jwtToken, { complete: true });
+        // console.log(decodedToken);
 
         const db = client.db(dbName);
         const collection = db.collection('User');
+        
 
-        let user = await collection.findOne({ Login: login });
+        let user = await collection.findOne({ username: userLogin });
 
         // Check to see if valid user
         if (user) {
 
-            let updatedUser = { FirstName: firstName, LastName: lastName, Email: email, PhoneNumber: phoneNumber, Location: location };
+            let updatedUser = { firstName: firstName, lastName: lastName, email: email, phoneNumber: phoneNumber, address: location };
 
             // Trim empty fields from updatedUser
             // Done by stringify, which does not stringify
@@ -143,16 +170,25 @@ exports.setApp = function (app, client) {
                 const result = await collection.updateOne(
                     // Case sensitive; Login: login,
                     // not login: login
-                    { Login: login },
+                    { username: userLogin },
                     { $set: updatedUser }
                 )
 
                 // Check to see if anything was updated
                 if (result.modifiedCount === 0) {
                     message = "No changes made to user";
+                    newJwtToken = token.refresh(jwtToken);
                 }
+                // If something updated, update jwt
                 else {
                     message = "User updated successfully";
+
+                    const newFirstName = updatedUser.firstName || user.firstName;
+                    const newLastName = updatedUser.lastName || user.lastName;
+
+                    const newToken = token.createToken(newFirstName, newLastName, user._id, user.username);
+
+                    newJwtToken = newToken.accessToken;
                 }
 
             } catch (e) {
@@ -164,58 +200,19 @@ exports.setApp = function (app, client) {
             message = "User not found";
         }
 
-        let ret = { message: message };
-        res.status(200).json(ret);
-    });
-
-    // Forgot password api
-    app.post("/api/forgotPassword", async (req, res, next) => {
-        // incoming: login, email, newPassword
-        // outgoing: newPassword
-        const { login, email, newPassword } = req.body;
-        let message = '';
-
-        const db = client.db(dbName);
-        const collection = db.collection('User');
-
-        // Find based off email AND login, incase same email
-        let user = await collection.findOne({ Login: login, Email: email });
-        // console.log(user);
-
-        if (user) {
-            if (user.Verified) {
-                // Make sure to hash new password
-                const saltRounds = 12;
-                const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
-
-                // Filter based off login, since unique
-                const result = await collection.updateOne(
-                    { Login: login },
-                    { $set: { Password: hashedPassword } }
-                );
-
-                message = 'Password updated successfully';
-            }
-            else {
-                message = 'Please verify your email before changing password';
-            }
-        }
-        else {
-            message = 'No such login/email';
-        }
-
-
-        let ret = { message: message };
+        ret.message = message;
+        ret.jwtToken = newJwtToken;
         res.status(200).json(ret);
     });
 
     // Register api
     // Need to implement password hashing via bcrypt - done
     // Need to implement email verification - done
+    // No JWT for register, since ya know, register
     app.post("/api/register", async (req, res, next) => {
         // incoming: firstName, lastName, login, password
         // outgoing: id, firstName, lastName, email, message
-        const { firstName, lastName, email, phoneNumber, location, login, password } = req.body;
+        const { firstName, lastName, email, phoneNumber, location, userLogin, password } = req.body;
         let message = '';
         let id = -1;
 
@@ -227,7 +224,7 @@ exports.setApp = function (app, client) {
         try {
             // findOne finds one instance, which there should only be one
             // instance of a login anyways
-            const existingUser = await db.collection('User').findOne({ Login: login });
+            const existingUser = await db.collection('User').findOne({ username: userLogin });
 
             // If user is found, don't do anything
             if (existingUser) {
@@ -246,15 +243,15 @@ exports.setApp = function (app, client) {
 
                 // No user with login found, so make new user
                 const newUser = {
-                    FirstName: firstName,
-                    LastName: lastName,
-                    Email: email,
-                    PhoneNumber: phoneNumber,
-                    Location: location,
-                    Login: login,
-                    Password: hashedPassword,
-                    Favorites: {},
-                    Listings: {},
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    phoneNumber: phoneNumber,
+                    address: location,
+                    username: userLogin,
+                    password: hashedPassword,
+                    Favorites: [],
+                    Listings: [],
                     Verified: false
                 };
 
@@ -276,11 +273,15 @@ exports.setApp = function (app, client) {
                 });
 
                 // The email itself
+                const verificationLink = `https://swipet-becad9ab7362.herokuapp.com//api/verifyEmail?token=${token}`;
                 const mailOptions = {
                     from: process.env.EMAIL_USER,
                     to: email,
                     subject: 'Email Verification for swiPet',
-                    text: `Please verify your swiPet account by clicking on the following link: https://swipet-becad9ab7362.herokuapp.com/api/verifyEmail?token=${token}`
+                    // website format: http://domain/api/verify-email?token=${token}
+                    // in this case locally since testing
+                    // Need to use backtick here for ${token}
+                    text: `Please verfiy your swiPet account by clicking on the follow link... ${verificationLink}`
                 };
 
                 await transporter.sendMail(mailOptions);
@@ -292,115 +293,219 @@ exports.setApp = function (app, client) {
         }
 
         // probably dont want  to return login and password here...
-        let ret = { id: id, firstName: firstName, lastName: lastName, email: email, message: message }
+        const ret = { id: id, firstName: firstName, lastName: lastName, email: email, message: message }
         res.status(200).json(ret);
     });
 
-    // verify email api
+    // Verify email api
     app.get('/api/verifyEmail', async (req, res, next) => {
         const { token } = req.query;
         const db = client.db(dbName);
-    
+
         let message;
-        let isVerified = false;
-    
+
         try {
+
             // Decode token and get userId from it
             const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
             const userId = decodedToken.userId;
-    
-            // Find userId and edit Verified boolean
-            const result = await db.collection('User').updateOne(
-                { _id: new ObjectId(userId) },
-                { $set: { Verified: true } }
-            );
-    
-            if (result.modifiedCount > 0) {
-                message = 'Email verified successfully';
-                isVerified = true;
-            } else {
-                message = 'Email already verified or user not found';
+
+            const user = await db.collection('User').findOne({ _id: new ObjectId(userId) });
+
+            // Check to see if user is already verified
+            if (user.Verified) {
+                message = 'Email already verified';
             }
+            else {
+                // Find userId and edit Verified boolean
+                // Need new ObjectId here
+                await db.collection('User').updateOne(
+                    { _id: new ObjectId(userId) },
+                    { $set: { Verified: true } }
+                );
+
+                message = 'Email verified successfully';
+            }
+
         } catch (e) {
-            message = 'Invalid or expired token';
+            message = e.toString();
         }
-    
-        // Render an HTML response
-        const htmlResponse = `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Email Verification</title>
-            <style>
-                body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-                .container { text-align: center; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
-                .success { color: green; }
-                .error { color: red; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <h1>${isVerified ? 'Email Verified' : 'Verification Failed'}</h1>
-                <p class="${isVerified ? 'success' : 'error'}">${message}</p>
-                <a href="${APP_URL}">Return to swiPet</a>
-            </div>
-        </body>
-        </html>
-        `;
-    
-        res.send(htmlResponse);
+
+        const ret = { message: message };
+        res.status(200).json(ret);
+    });
+
+    // Forgot password api
+    // Sending email similar to email verification api
+    app.post("/api/forgotPassword", async (req, res, next) => {
+        // incoming: email, jwtToken
+        // outgoing: message
+        const { userLogin, email } = req.body;
+        let message = '';
+
+        const db = client.db(dbName);
+
+
+        try {
+            const user = await db.collection('User').findOne({ username: userLogin, email: email });
+
+            if (!user) {
+                message = 'User not found';
+            }
+            else {
+                // Token for password reset - should only last 10 mins
+                const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '10m' });
+
+                // Database to manage one time link
+                await db.collection('PasswordResetTokens').insertOne({
+                    userId: user._id,
+                    token: token,
+                    used: false
+                });
+
+                const transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: process.env.EMAIL_USER,
+                        pass: process.env.EMAIL_PASS
+                    }
+                });
+
+                const resetLink = `http://localhost:3000/api/resetPassword?token=${token}`;
+                const mailOptions = {
+                    from: process.env.EMAIL_USER,
+                    to: email,
+                    subject: 'Password Reset for swiPet',
+                    text: `Reset your swiPet account password by clicking on the follow link... ${resetLink}`
+                };
+
+                await transporter.sendMail(mailOptions);
+                message = 'Password reset email sent';
+            }
+
+        } catch (e) {
+            message = e.toString();
+        }
+
+        const ret = { message: message };
+        res.status(200).json(ret);
+    });
+
+    // Reset password api
+    app.post('/api/resetPassword', async (req, res, next) => {
+        // incoming: token, newPassword
+        // outgoing: message
+        const { token, newPassword } = req.body;
+        let message = '';
+
+        const db = client.db(dbName);
+
+        // Get token from database
+        const checkToken = await db.collection('PasswordResetTokens').findOne({ token: token });
+
+        if (!checkToken) {
+            let ret = { message: 'Invalid token' };
+            res.status(200).json(ret);
+            return;
+        }
+
+        // Check if token is used
+        if (checkToken.used) {
+            message = 'Token already used';
+        }
+
+        else {
+            try {
+                const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+                const userId = decodedToken.userId;
+
+                // Don't forget to hash new password...
+                const saltRounds = 12;
+                const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+                await db.collection('User').updateOne(
+                    { _id: new ObjectId(userId) },
+                    { $set: { password: hashedPassword } }
+                );
+
+                // Update used to true
+                await db.collection('PasswordResetTokens').updateOne(
+                    { token: token },
+                    { $set: { used: true }}
+                );
+
+                message = 'Password reset successfully';
+
+            } catch (e) {
+                message = e.toString();
+            }
+        }
+
+        const ret = { message: message };
+        res.status(200).json(ret);
     });
 
     // API to add new pets to specific users and update their listings to reflect the new pet
     app.post('/api/addpet', async (req, res) => {
-
-        // incoming: userLogin, petName, type, petAge, petGender, breed, petSize, bio, contactEmail, location, images
+        // incoming: userLogin, petName, type, petAge, petGender, color, breed, petSize, bio, contactEmail, location, images, adoptionFee
         // outgoing: message, petId
-
-        const { userLogin, petName, type, petAge, petGender, breed, petSize, bio, contactEmail, location, images } = req.body;
+          
+        const { userLogin, petName, type, petAge, petGender, colors, breed, petSize, bio, contactEmail, location, images, adoptionFee, jwtToken } = req.body;
         let message = '';
         let petId = null;
+
+	    if (token.isExpired(jwtToken)) {
+            let ret = { message: 'The JWT is no longer valid', jwtToken: '' };
+            res.status(200).json(ret);
+            return;
+        }
+          	
         try {
             // Connect to database
             const db = client.db(dbName);
-
-            // Checks if there is a valid user to create the pet, if there is then create the pet
-            const user = await db.collection('User').findOne({ Login: userLogin });
+            
+	        // Checks if there is a valid user to create the pet, if there is then create the pet
+            const user = await db.collection('User').findOne({ username: userLogin });
             if (user) {
+                // Makes sure the colors are correct and picked out of the predfined list
+                const validColors = Array.isArray(colors) ? colors.filter(color => allowedColors.includes(color)) : [];
+                
                 const newPet = {
-                    Login: userLogin,
+                    username: userLogin,
                     Pet_Name: petName,
                     Pet_Type: type,
                     Age: petAge,
                     Gender: petGender,
+                    Color: validColors,
                     Breed: breed,
                     Size: petSize,
                     Bio: bio,
                     Contact_Email: contactEmail,
                     Location: location,
-                    Images: images || []
+                    Images: images || [],
+                    AdoptionFee: adoptionFee
                 };
-                // Insert new pet and their descriptions into database
-                const result = await db.collection('Pet').insertOne(newPet);
 
+		        // Insert new pet and their descriptions into database
+                const result = await db.collection('Pet').insertOne(newPet);
+          
                 // Needed to get the pet's ObjectId
                 petId = result.insertedId;
-
+          
                 // Updates Listing of user who created the pet with the pet's ObjectId
-                await db.collection('User').updateOne(
-                    { Login: userLogin },
+		        await db.collection('User').updateOne(
+                    { username: userLogin },
                     { $push: { Listings: petId } }
                 );
                 message = "Pet Created";
-            } else {
-                message = "User does not exist";
+                } else {
+                    message = "User does not exist";
+                }
+            } catch (e) {
+              message = e.toString();
             }
-        } catch (e) {
-            message = e.toString();
-        }
-        const ret = { message: message, petId: petId };
+        let refreshedToken = token.refresh(jwtToken);
+       	const ret = { message: message, petId: petId, jwtToken: refreshedToken.accessToken };
         res.status(200).json(ret);
     });
 
@@ -410,14 +515,25 @@ exports.setApp = function (app, client) {
         // incoming: userLogin, petId
         // outgoing: message
 
-        const { userLogin, petId } = req.body;
+        const { userLogin, petId, jwtToken } = req.body;
         let message = '';
+
+        if (token.isExpired(jwtToken)) {
+            let ret = { message: 'The JWT is no longer valid', jwtToken: '' };
+            res.status(200).json(ret);
+            return;
+        }
+
+        // // jwt testing
+        // const decodedToken = jwt.decode(jwtToken, { complete: true });
+        // console.log(decodedToken);
+
         try {
             // Connect to the database
             const db = client.db(dbName);
 
             // Checks if there is a valid user
-            const user = await db.collection('User').findOne({ Login: userLogin });
+            const user = await db.collection('User').findOne({ username: userLogin });
             if (user) {
                 const objectId = new ObjectId(petId);
 
@@ -427,7 +543,7 @@ exports.setApp = function (app, client) {
                 // If there is a valid user and a valid pet, add that pet to the user's favorited pets
                 if (pet) {
                     await db.collection('User').updateOne(
-                        { Login: userLogin },
+                        { username: userLogin },
                         { $addToSet: { Favorites: objectId } }
                     );
                     message = "Pet added to favorites";
@@ -440,22 +556,76 @@ exports.setApp = function (app, client) {
         } catch (e) {
             message = e.toString();
         }
-        const ret = { message: message };
+
+        let refreshedToken = token.refresh(jwtToken);
+        const ret = { message: message, jwtToken: refreshedToken.accessToken };
         res.status(200).json(ret);
     });
 
+    // API to remove a pet from a user's favorites list
+    app.post('/api/unfavorite', async (req, res) => {
+    // incoming: userLogin, petId
+    // outgoing: message
+        
+    const { userLogin, petId, jwtToken } = req.body;
+    let message = '';
+
+    if (token.isExpired(jwtToken)) {
+        let ret = { message: 'The JWT is no longer valid', jwtToken: '' };
+        res.status(200).json(ret);
+        return;
+    }
+
+    try {
+        // Connect to the database
+        const db = client.db(dbName);
+        
+        // Check if the user exists
+        const user = await db.collection('User').findOne({ username: userLogin });
+        if (user) {
+            const objectId = new ObjectId(petId);
+        
+            // Check if the pet is in the user's favorites list
+            const isFavorited = user.Favorites.some(favorite => favorite.equals(objectId));
+            if (isFavorited) {
+                // Remove the pet from the user's favorites list
+                await db.collection('User').updateOne(
+                    { username: userLogin },
+                    { $pull: { Favorites: objectId } }
+                );
+                message = "Pet removed from favorites";
+                } else {
+                    message = "Pet is not in the favorites list";
+                }
+            } else {
+                message = "User does not exist";
+            }
+        } catch (e) {
+            message = e.toString();
+        }
+        let refreshedToken = token.refresh(jwtToken);
+        const ret = { message: message, jwtToken: refreshedToken.accessToken };
+        res.status(200).json(ret);
+    });
+    
     // API to delete a pet and the listing of the original user who uploaded the pet (as well as from the favorites list of anyone who has that pet favorited)
     app.post('/api/deletepet', async (req, res) => {
-
         // incoming: userLogin, petId
         // outgoing: message
 
-        const { userLogin, petId } = req.body;
+        const { userLogin, petId, jwtToken } = req.body;
         let message = '';
+
+        if (token.isExpired(jwtToken)) {
+            let ret = { message: 'The JWT is no longer valid', jwtToken: '' };
+            res.status(200).json(ret);
+            return;
+        }
+
         try {
             // Connect to database
             const db = client.db(dbName);
-            const user = await db.collection('User').findOne({ Login: userLogin });
+            const user = await db.collection('User').findOne({ username: userLogin });
 
             // If there is a valid user, proceed to see if the pet is in the database
             if (user) {
@@ -466,7 +636,7 @@ exports.setApp = function (app, client) {
                 if (pet) {
 
                     // If the user that created the pet does not matche with the user that was inputted, return error
-                    if (pet.Login !== userLogin) {
+                    if (pet.username !== userLogin) {
                         message = "You do not have permission to delete this pet";
                     } else {
                         // Delete from the pet collection
@@ -474,7 +644,7 @@ exports.setApp = function (app, client) {
 
                         // Update the creator's listings to remove it
                         await db.collection('User').updateOne(
-                            { Login: userLogin },
+                            { username: userLogin },
                             { $pull: { Listings: pet._id } }
                         );
 
@@ -494,52 +664,130 @@ exports.setApp = function (app, client) {
         } catch (e) {
             message = e.toString();
         }
-        const ret = { message: message };
+
+        let refreshedToken = token.refresh(jwtToken);
+        const ret = { message: message, jwtToken: refreshedToken.accessToken };
         res.status(200).json(ret);
     });
 
-    // New getAllPets endpoint that also functions as a search endpoint
-    app.get('/api/getAllPets', async (req, res) => {
-        const {
-            petName,
-            type,
-            minAge,
-            maxAge,
-            gender,
-            breed,
-            size,
-            location
-        } = req.query;
+    // API endpoint to update pet listings (only people who created are able to edit it)
+    app.post("/api/updatepet", async (req, res, next) => {
+        // incoming: userLogin, petId, petName, type, petAge, petGender, colors, breed, petSize, bio, contactEmail, location, images, adoptionFee
+        // outgoing: message
 
-        let query = {};
-
-        if (petName) query["Pet Name"] = { $regex: petName, $options: 'i' };
-        if (type) query["Animal Type"] = { $regex: type, $options: 'i' };
-        if (gender) query.Gender = { $regex: gender, $options: 'i' };
-        if (breed) query.Breed = { $regex: breed, $options: 'i' };
-        if (size) query["Pet Size"] = { $regex: size, $options: 'i' };
-        if (location) query.Location = { $regex: location, $options: 'i' };
-
-        if (minAge || maxAge) {
-            query["Pet Age"] = {};
-            if (minAge) query["Pet Age"].$gte = parseInt(minAge);
-            if (maxAge) query["Pet Age"].$lte = parseInt(maxAge);
-        }
-
-        console.log('Query:', query);
-
-        let pets = [];
+        const { userLogin, petId, petName, type, petAge, petGender, colors, breed, petSize, bio, contactEmail, location, images, adoptionFee, jwtToken } = req.body;
         let message = '';
-
+	
+        if (token.isExpired(jwtToken)) {
+            let ret = { message: 'The JWT is no longer valid', jwtToken: '' };
+            res.status(200).json(ret);
+            return;
+        }
         try {
             const db = client.db(dbName);
-            pets = await db.collection('Pet').find(query).toArray();
-            message = pets.length > 0 ? `${pets.length} pets found` : 'No pets found matching the criteria';
+            const objectId = new ObjectId(petId);
+            const pet = await db.collection('Pet').findOne({ _id: objectId });
+
+            // Check to see if there is a valid pet and the original user is the one trying to delete it
+            if (pet) {
+                if (pet.username !== userLogin) {
+                    message = "You do not have permission to update this pet";
+                } else {
+                    let updatedPet = { 
+                        Pet_Name: petName,
+                        Pet_Type: type,
+                        Age: petAge,
+                        Gender: petGender,
+                        Breed: breed,
+                        Size: petSize,
+                        Bio: bio,
+                        Contact_Email: contactEmail,
+                        Location: location,
+                        Images: images || [],
+                        AdoptionFee: adoptionFee
+                    };
+
+                    // Makes sure the colors are correct and picked out of the predfined list, then adds to updatedPet
+                    const validColors = Array.isArray(colors) ? colors.filter(color => allowedColors.includes(color)) : [];
+                    if (validColors.length > 0){
+                        updatedPet.Color = validColors;
+                    }
+
+                    // If fields are left blank, keep original data for those fields
+                    updatedPet = JSON.parse(JSON.stringify(updatedPet));
+
+                    // Set the updated pet description
+                    const result = await db.collection('Pet').updateOne(
+                        { _id: objectId },
+                        { $set: updatedPet }
+                    );
+
+                    // Check to see if anything was updated
+                    if (result.modifiedCount === 0) {
+                        message = "No changes made to the pet information";
+                    } else {
+                        message = "Pet information updated successfully";
+                    }
+                }
+            } else {
+                message = "Pet not found";
+            }
         } catch (e) {
-            message = 'Error occurred while fetching pets: ' + e.toString();
+            message = e.toString();
+        }
+        let refreshedToken = token.refresh(jwtToken);
+        let ret = { message: message, jwtToken: refreshedToken.accessToken };
+        res.status(200).json(ret);
+    });
+
+    // Search Pet API Endpoint that uses the fields of the pet descriptions (like color, breed, age, etc.)
+    app.post("/api/searchpet", async (req, res, next) => {
+        // incoming: userLogin, type, petAge, petGender, colors, breed, petSize, location
+        // outgoing: matching pets
+
+        const { userLogin, type, petAge, petGender, colors, breed, petSize, location, jwtToken } = req.body;
+        let message = '';
+        
+        if (token.isExpired(jwtToken)) {
+            let ret = { message: 'The JWT is no longer valid', jwtToken: '' };
+            res.status(200).json(ret);
+            return;
         }
 
-        res.status(200).json({ pets, message });
-    });
-};
+        try {
+            // Connect to database
+            const db = client.db(dbName);
 
+            // Make sure to get user login so it does not display user's listed pets
+            // Make sure the fields are inputted, if not then ignore
+            let search = { username: { $ne: userLogin}};
+            if (type != null) search.Pet_Type = type;
+            if (petAge != null) search.Age = petAge;
+            if (petGender != null) search.Gender = petGender;
+            if (breed != null) search.Breed = breed;
+            if (petSize != null) search.Size = petSize;
+            if (location != null) search.Location = location;
+      
+            // If the color is part of the allowed colors, search for pets of that color
+            if (Array.isArray(colors) && colors.length > 0) {
+                const validColors = colors.filter(color => allowedColors.includes(color));
+                if (validColors.length > 0) {
+                    // Searches for the color
+                    search.Color = { $in: validColors }; 
+                } 
+            } 
+      
+            // Search using the fields provided
+            const pets = await db.collection('Pet').find(search).toArray();
+            if (pets.length === 0){
+                message = "No pets found";
+            } else {
+                message = "Pets retrieved successfully";
+            }
+            let refreshedToken = token.refresh(jwtToken);
+            res.status(200).json({ pets: pets, message: message, jwtToken: refreshedToken.accessToken });
+        } catch (e) {
+            message = e.toString();
+        }
+    });
+}
