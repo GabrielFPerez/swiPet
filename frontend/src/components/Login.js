@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Login.css';
 import { ReactComponent as LoginCat } from '../icons/login-cat.svg';
 import { jwtDecode } from "jwt-decode";
-import tokenStorage from '../tokenStorage.js';
+import { storeToken } from '../tokenStorage.js';
 
 function Login() {
     const [loginName, setLoginName] = useState('');
     const [loginPassword, setLoginPassword] = useState('');
     const [message, setMessage] = useState('');
+    const navigate = useNavigate();
     
     var bp = require('./Path.js');
 
@@ -17,10 +18,6 @@ function Login() {
 
         var obj = { userLogin: loginName, password: loginPassword };
         var js = JSON.stringify(obj);
-
-        const url = '/api/login';
-        console.log('Sending request to:', new URL(url, window.location.origin).href);
-
 
         try {
             const response = await fetch(bp.buildPath('api/login'), {
@@ -38,29 +35,23 @@ function Login() {
                 throw new Error("No JWT token received");
             }
 
-            //let storage = require('../tokenStorage.js');
-            tokenStorage.storeToken(jwtToken);
-            
-
+            storeToken(jwtToken);
+            console.log("Stored token:", jwtToken);
 
             const decoded = jwtDecode(jwtToken, {complete: true});
             console.log("Decoded JWT:", decoded);
-            
 
             let userID = decoded.userId;
             let FirstName = decoded.firstName;
             let LastName = decoded.lastName;
             let username = decoded.username;
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
             if (userID) {
                 var user = { FirstName: FirstName, LastName: LastName, userID: userID, username: username};
                 localStorage.setItem('user_data', JSON.stringify(user));
                 setMessage('');
-                window.location.href = '/swipe';
+                console.log("Login successful, navigating to /swipe");
+                navigate('/swipe');
             } else {
                 console.log("userID is invalid:", userID);
                 setMessage(res.message || 'Login failed');
