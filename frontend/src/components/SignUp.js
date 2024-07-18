@@ -5,15 +5,7 @@ import { ReactComponent as SigninCat } from '../icons/register-cat.svg'
 
 function SignUp() {
 
-    const app_name = 'swipet-becad9ab7362';
-
-    function buildPath(route) {
-        if (process.env.NODE_ENV === 'production') {
-            return 'https://' + app_name + '.herokuapp.com' + route;
-        } else {
-            return 'http://localhost:3001' + route;
-        }
-    }
+    var bp = require('./Path.js');
 
     const [error, setError] = useState('');
 
@@ -23,9 +15,9 @@ function SignUp() {
 
         const firstName = document.getElementById('firstname').value;
         const lastName = document.getElementById('lastname').value;
-        const login = document.getElementById('login').value;
+        const userLogin = document.getElementById('login').value;
         const email = document.getElementById('email').value;
-        const location = document.getElementById('location').value;
+        const address = document.getElementById('location').value;
         const phoneNumber = document.getElementById('phonenumber').value;
         const password = document.getElementById('registerpassword').value;
         const confirmPassword = document.getElementById('confirmpassword').value;
@@ -41,13 +33,13 @@ function SignUp() {
             lastName,
             email,
             phoneNumber,
-            location,
-            login,
+            address,
+            userLogin,
             password
         };
 
         try {
-            const response = await fetch(buildPath('/api/register'), {
+            const response = await fetch(bp.buildPath('api/register'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
