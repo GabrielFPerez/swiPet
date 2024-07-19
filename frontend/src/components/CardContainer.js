@@ -171,21 +171,29 @@ const CardContainer = () => {
             
             if (lastAction.action === 'favorite') {
                 try {
-                    const userLogin = localStorage.getItem('user_login');
-                    const jwtToken = localStorage.getItem('jwtToken');
 
-                    if (!userLogin || !jwtToken) {
+                    let token = retrieveToken();
+                    console.log("Token in undoFavorite:", token);
+
+                    let _ud = localStorage.getItem('user_data');
+                    let ud = JSON.parse(_ud);
+
+                    let username = ud.username;
+
+                    console.log("current user is: ", username);
+
+                    if (!username || !token) {
                         console.error('User login or JWT token not found');
                         return;
                     }
 
-                    const response = await fetch(bp.buildPath('/api/unfavorite'), {
+                    const response = await fetch(bp.buildPath('api/unfavorite'), {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${jwtToken}`
+                            'Authorization': `Bearer ${token}`
                         },
-                        body: JSON.stringify({ userLogin, petId: lastAction.pet._id })
+                        body: JSON.stringify({ userLogin: username, petId: lastAction.pet._id, jwtToken: token})
                     });
 
                     const data = await response.json();
@@ -197,8 +205,8 @@ const CardContainer = () => {
                         return;
                     }
 
-                    if (data.jwtToken) {
-                        localStorage.setItem('jwtToken', data.jwtToken);
+                    if (data.token) {
+                        localStorage.setItem('jwtToken', data.token);
                     }
 
                     setHistory((prevHistory) => prevHistory.slice(0, -1));
