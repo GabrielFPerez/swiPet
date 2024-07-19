@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PetCard from './PetCard';
+import SearchForm from './SearchForm';
 import '../styles/CardContainer.css';
 import { ReactComponent as Undo } from '../icons/undo.svg';
 import { jwtDecode } from "jwt-decode";
@@ -9,7 +10,16 @@ import { retrieveToken, storeToken } from '../tokenStorage.js';
 const CardContainer = () => {
     const [pets, setPets] = useState([]);
     const [history, setHistory] = useState([]);
-    const [searchCriteria, setSearchCriteria] = useState('');
+    const [searchCriteria, setSearchCriteria] = useState({
+        type: '',
+        petAge: '',
+        petGender: '',
+        colors: '',
+        breed: '',
+        petSize: '',
+        location: ''
+    });
+    const [showSearchPopup, setShowSearchPopup] = useState(false);
     const navigate = useNavigate();
     let search;
 
@@ -45,13 +55,7 @@ const CardContainer = () => {
 
         let obj = {
             userLogin: username, 
-            type: null, 
-            petAge: null, 
-            petGender: null, 
-            colors: null, 
-            breed: null, 
-            petSize: null, 
-            location: null, 
+            ...searchCriteria,  
             jwtToken: token
         }
         
@@ -69,9 +73,6 @@ const CardContainer = () => {
                     'Authorization': `Bearer ${token}`
                 }
             });
-    
-            console.log('Response status:', response.status);
-            console.log('Response headers:', response.headers);
     
             const data = await response.json();
     
@@ -106,29 +107,44 @@ const CardContainer = () => {
 
     const handleFavorite = async (petId) => {
         try {
-            const userLogin = localStorage.getItem('user_login');
-            const jwtToken = localStorage.getItem('jwtToken');
+            let token = retrieveToken();
 
-            if (!userLogin || !jwtToken) {
+            console.log("Token in handleFavorite:", token);
+
+            if (!token) {
+                console.error('No token found in storage');
+                navigate('/login');
+                return;
+            }
+
+            let _ud = localStorage.getItem('user_data');
+            let ud = JSON.parse(_ud);
+
+            let username = ud.username;
+
+            console.log("current user is: ", username);
+
+
+            if (!username || !token) {
                 console.error('User login or JWT token not found');
                 return;
             }
 
-            const response = await fetch(bp.buildPath('/api/addfavorite'), {
+            const response = await fetch(bp.buildPath('api/addfavorite'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${jwtToken}`
+                    'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ userLogin, petId })
+                body: JSON.stringify({ userLogin: username, petId, jwtToken: token })
             });
 
             const data = await response.json();
 
             if (data.message === 'The JWT is no longer valid') {
                 console.log('JWT is no longer valid. Redirecting to login...');
-                localStorage.removeItem('jwtToken');
-                window.location.href = '/login';
+                localStorage.removeItem('token');
+                //window.location.href = '/login';
                 return;
             }
 
@@ -199,26 +215,30 @@ const CardContainer = () => {
         }
     };
 
-    const handleSearch = (event) => {
-        setSearchCriteria(event.target.value);
-    };
-
-    const handleSearchSubmit = (event) => {
-        event.preventDefault();
+    const handleSearch = (criteria) => {
+        setSearchCriteria(criteria);
         fetchPets();
     };
 
     return (
         <div className="card-container-wrapper">
-            <form className="search-form" onSubmit={handleSearchSubmit}>
-                <input 
-                    type="text"
-                    placeholder="Search for pets..."
-                    value={search}
-                    onChange={handleSearch}
+            <button onClick={() => setShowSearchPopup(true)}>Search</button>
+            {showSearchPopup && (
+                <SearchForm 
+                    onSearch={handleSearch}
+                    onClose={() => setShowSearchPopup(false)}
                 />
-                <button type="submit">Search</button>
-            </form>
+            )}
+
+            <div className="search-criteria-display">
+                <h3>Search Criteria:</h3>
+                <ul>
+                    {Object.entries(searchCriteria).map(([key, value]) => (
+                        value && <li key={key}>{key}: {value}</li>
+                    ))}
+                </ul>
+            </div>
+
             <div className="card-container">
                 {pets.length > 0 ? (
                     <PetCard

@@ -1,17 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
 import { Button } from '../components/Button';
 import { ReactComponent as X } from '../icons/cross.svg';
 import { ReactComponent as Heart } from '../icons/heart.svg';
 import '../styles/PetCard.css';
+import { ReactComponent as Piggy } from '../icons/piggy-bank.svg';
+import { ReactComponent as Gender } from '../icons/gender.svg';
+import { ReactComponent as Cake } from '../icons/cake.svg';
+import { ReactComponent as Ruler } from '../icons/ruler.svg';
+import { ReactComponent as Book } from '../icons/book.svg';
+
 
 const PetCard = ({ pet, onFavorite, onDiscard, showButtons = true }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isBioOverflowing, setIsBioOverflowing] = useState(false);
+  const bioRef = useRef(null);
   const images = pet.Images.slice(0, 3);
 
   const goToImage = (index) => {
     setCurrentImageIndex(index);
   };
+
+  useEffect(() => {
+    const checkBioOverflow = () => {
+      if (bioRef.current) {
+        setIsBioOverflowing(bioRef.current.scrollHeight > bioRef.current.clientHeight);
+      }
+    };
+
+    checkBioOverflow();
+    window.addEventListener('resize', checkBioOverflow);
+
+    return () => {
+      window.removeEventListener('resize', checkBioOverflow);
+    };
+  }, [pet.Bio]);
 
   return (
     <div className="pet-card-container">
@@ -45,20 +68,20 @@ const PetCard = ({ pet, onFavorite, onDiscard, showButtons = true }) => {
 
             <CardContent className="pet-card-content">
               <div className="pet-card-details">
-                <div>
-                  <p className="pet-card-detail"><strong>Age:</strong> {pet.Age} years</p>
+                <div className="pet-card-detail">
+                  <Cake /> Age: {pet.Age} years
                 </div>
 
-                <div>
-                  <p className="pet-card-detail"><strong>Pet Size:</strong> {pet.Size}</p>
+                <div className="pet-card-detail" >
+                  <Ruler /> Size: {pet.Size}
                 </div>
 
-                <div>
-                  <p className="pet-card-detail"><strong>Adoption Fee:</strong> ${pet.AdoptionFee || 'N/A'}</p>
+                <div className="pet-card-detail">
+                  <Gender />  Gender: {pet.Gender}
                 </div>
 
-                <div>
-                  <p className="pet-card-detail"><strong>Gender:</strong> {pet.Gender}</p>
+                <div className="pet-card-detail">
+                  <Piggy /> Adoption Fee: ${pet.AdoptionFee || 'N/A'}
                 </div>
 
               </div>
@@ -73,8 +96,13 @@ const PetCard = ({ pet, onFavorite, onDiscard, showButtons = true }) => {
             </CardHeader>
 
             <div className='pet-card-bio-section'>
-              <h3 className="pet-card-bio-title">Animal's Story</h3>
-              <p className="pet-card-bio">{pet.Bio}</p>
+              <div className="pet-card-bio-title"><Book />  Animal's Story</div>
+              <p 
+                ref={bioRef}
+                className={`pet-card-bio ${isBioOverflowing ? 'scrollable' : ''}`}
+              >
+                {pet.Bio}
+              </p>
             </div>
 
           </div>

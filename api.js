@@ -761,12 +761,12 @@ exports.setApp = function (app, client) {
             // Make sure to get user login so it does not display user's listed pets
             // Make sure the fields are inputted, if not then ignore
             let search = { username: { $ne: userLogin}};
-            if (type != null) search.Pet_Type = type;
-            if (petAge != null) search.Age = petAge;
-            if (petGender != null) search.Gender = petGender;
-            if (breed != null) search.Breed = breed;
-            if (petSize != null) search.Size = petSize;
-            if (location != null) search.Location = location;
+            if (type != "") search.Pet_Type = type;
+            if (petAge != "") search.Age = petAge;
+            if (petGender != "") search.Gender = petGender;
+            if (breed != "") search.Breed = breed;
+            if (petSize != "") search.Size = petSize;
+            if (location != "") search.Location = location;
       
             // If the color is part of the allowed colors, search for pets of that color
             if (Array.isArray(colors) && colors.length > 0) {

@@ -5,7 +5,7 @@
   width: 100%;
   height: 100vh; /* This ensures the container takes up the full viewport height */
   margin: 0 auto;
-  font-family: inherit;
+  font-family: DM Sans;
 }
 
 .card-background {
@@ -23,7 +23,6 @@
   width: 838px;
   height: 545px;
   display: flex;
-  justify-content: space-between;
   flex-shrink: 0;
   background-image: url(../backgrounds/card-background.png);
 }
@@ -34,6 +33,7 @@
 
 .right-container {
   margin: 58px 67px 58px 0;
+  width: 404px;
 }
 
 .pet-card-image-container {
@@ -79,10 +79,12 @@
 
 .card-header {
   padding-left: 38px;
+  padding-top: 0px;
 }
 
-.pet-card-title {
-  font-size: 1.5em;
+.card-title {
+  font-size: 38px;
+  font-weight: 500;
 }
 
 .pet-card-location, .pet-card-info {
@@ -95,27 +97,49 @@
 
 .pet-card-bio-section {
   padding-left: 59px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  width: 86%
 }
 
 .pet-card-bio-title {
-  font-weight: bold;
+  font-weight: 400;
+  font-size: 17px;
   margin-bottom: 8px;
+  padding: 3px;
+  border-bottom: 0.5px solid black;
 }
 
 .pet-card-bio {
   margin-bottom: 16px;
+  overflow-y: auto;
+  max-height: 270px; /* Adjust this value to control when scrolling starts */
+  padding-right: 10px; /* Add some padding for the scrollbar */
 }
 
 .pet-card-details {
+  margin-left: -18px;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
   margin-bottom: 6px;
+  display: flex;
+  flex-direction: column;
 }
 
 .pet-card-detail {
-  font-size: 0.9em;
+  font-size: 17px;
   margin: 0;
-  font-size: large;
+  font-weight: 400;
+  border-bottom: 0.5px solid black;
+  padding: 3px 10px;
+  width: 100%;
+}
+
+.pet-card-detail:last-child {
+  border-bottom: none; /* Remove border from the last detail */
 }
 
 .pet-card-button {
@@ -145,4 +169,24 @@
 .icon {
   width: 24px;
   height: 24px;
+}
+
+.pet-card-location, .pet-card-info {
+  font-size: 12px;
+  font-weight: 400;
+  color: #000000B2;
+}
+
+.pet-card-bio::-webkit-scrollbar {
+  width: 6px;
+}
+
+
+.pet-card-bio::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.pet-card-bio::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
