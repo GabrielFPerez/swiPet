@@ -757,10 +757,19 @@ exports.setApp = function (app, client) {
         try {
             // Connect to database
             const db = client.db(dbName);
+    
+    // Used to find the user so that we can check their favorites list
+    const user = await db.collection('User').findOne({ username: userLogin });
+            if (!user) {
+            return res.status(200).json({ message: "User not found" });
+            }
+    // Checks for pets in the user's favorites list so that they don't show up in the search
+    const userFavorites = user.Favorites.map(favorite => new ObjectId(favorite));
 
             // Make sure to get user login so it does not display user's listed pets
             // Make sure the fields are inputted, if not then ignore
-            let search = { username: { $ne: userLogin}};
+            let search = { Login: { $ne: userLogin }, _id: { $nin: userFavorites } };
+
             if (type != "") search.Pet_Type = type;
             if (petAge != "") search.Age = petAge;
             if (petGender != "") search.Gender = petGender;
