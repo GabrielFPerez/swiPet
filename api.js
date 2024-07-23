@@ -273,7 +273,7 @@ exports.setApp = function (app, client) {
                 });
 
                 // The email itself
-                const verificationLink = `https://swipet-becad9ab7362.herokuapp.com//api/verifyEmail?token=${token}`;
+                const verificationLink = `https://swipet-becad9ab7362.herokuapp.com/api/verifyEmail?token=${token}`;
                 const mailOptions = {
                     from: process.env.EMAIL_USER,
                     to: email,
