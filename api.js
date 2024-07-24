@@ -45,7 +45,7 @@ exports.setApp = function (app, client) {
                 // Password matches
                 if (passwordMatch) {
                     // Create JWT
-                    let jwtToken = token.createToken(user.firstName, user.lastName, user._id, user.username);
+                    let jwtToken = token.createToken(user.firstName, user.lastName, user._id, user.username, user.email);
 
                     // // jwt testing
                     // const decodedToken = jwt.decode(jwtToken.accessToken, { complete: true });
