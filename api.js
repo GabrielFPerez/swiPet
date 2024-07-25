@@ -278,11 +278,7 @@ exports.setApp = function (app, client) {
                 });
 
                 // The email itself
-<<<<<<< HEAD
                 const verificationLink = `http://swipet-becad9ab7362.herokuapp.com/api/verifyEmail?token=${token}`;
-=======
-                const verificationLink = `https://swipet-becad9ab7362.herokuapp.com/api/verifyEmail?token=${token}`;
->>>>>>> 0a403ae78652decc9204c16db211c5488fba4311
                 const mailOptions = {
                     from: process.env.EMAIL_USER,
                     to: email,
