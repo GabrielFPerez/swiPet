@@ -67,13 +67,6 @@
 }
 
 /* Optional: Add some margin to the buttons for better spacing */
-button {
-    margin: 5px;
-}
-
-form {
-    flex: ;
-}
 
 .toprow {
     margin-bottom: 70px;
@@ -92,7 +85,7 @@ form {
     height: 36px;
 }
 
-input[type="text"], select[type="text"] {
+.toprow input[type="text"], .toprow select[type="text"], .bottomrow input[type="text"], .bottomrow select[type="text"] {
     padding-left: 16px;
 }
 
@@ -101,7 +94,7 @@ select#petSize, select#gender {
 
 }
 
-select[type="text"] {
+.toprow select[type="text"], .bottomwrow select[type="text"] {
     padding: 1px, 2px, 1px, 16px;
     width: 200px
 }
@@ -120,8 +113,5 @@ button {
 
 }
 
-button:hover {
-    background-color: #848989; /* Darker shade of the default color */
-}
 
 
