@@ -12,8 +12,116 @@
 }
 
 .search-form-container {
-    background: white;
+    background-image: url(../backgrounds/login-background.png);
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 35px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-family: DM Sans;
+    width: 1120px;
+    height: 600px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }
+
+.color-select {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 30px;
+    width: 854px;
+
+}
+
+.color-option {
+    display: flex;
+    align-items: center;
+}
+
+.color-option input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.title {
+    color: black;
+    margin-bottom: 35px;
+}
+
+.search-form-container input, .search-form-container select, .search-form-container button {
+    font-family: DM Sans;
+}
+
+.toprow, .bottomrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 120px;
+    margin-bottom: 15px;
+}
+
+.search-fields {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    border-top: 2px solid black; /* 2px width, solid style, red color */
+}
+
+/* Optional: Add some margin to the buttons for better spacing */
+button {
+    margin: 5px;
+}
+
+form {
+    flex: ;
+}
+
+.toprow {
+    margin-bottom: 70px;
+}
+
+.bottomrow {
+    margin-top: 70px;
+    margin-bottom: 70px;
+}
+
+.toprow input, .toprow select, .bottomrow input, .bottomrow select {
+    width: 200px;
+    border-radius: 10px;
+    border: 1px;
+    padding: 0px, 8px, 0px, 0px;
+    height: 36px;
+}
+
+input[type="text"], select[type="text"] {
+    padding-left: 16px;
+}
+
+select#petSize, select#gender {
+    width: 216px;
+
+}
+
+select[type="text"] {
+    padding: 1px, 2px, 1px, 16px;
+    width: 200px
+}
+
+.placeholder-option {
+    color: gray;
+}
+
+button {
+    margin: 5px;
+    border-radius: 21px;
+    border: 1px;
+    width: 100px;
+    height: 41px;
+    cursor: pointer;
+
+}
+
+button:hover {
+    background-color: #848989; /* Darker shade of the default color */
+}
+
+

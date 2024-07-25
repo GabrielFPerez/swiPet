@@ -20,8 +20,7 @@
     padding: 10px 20px;
   }
   
-  .navbar-menu-button button,
-  .navbar-register-button button {
+  .navbar-menu-button button {
     background: none;
     border: none;
     cursor: pointer;
@@ -30,13 +29,13 @@
   .navbar-register-button button {
     width: 24px;
     height: 24px;
-  }
-  
-  .navbar-register-button button {
     padding: 5px 10px;
     border-radius: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
   }
-  
+
   .navbar-logo {
     flex-grow: 1;
     display: flex;

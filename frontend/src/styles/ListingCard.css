@@ -1,0 +1,89 @@
+.listing-card {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  
+  .listing-card-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  .listing-card {
+    display: flex;
+    flex-direction: column;
+    width: 250px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .listing-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .pet-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .pet-info {
+    padding: 15px;
+  }
+  
+  .pet-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 0 0 5px 0;
+  }
+  
+  .pet-location {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0 0 5px 0;
+  }
+  
+  .pet-details {
+    font-size: 0.8rem;
+    color: #888;
+    margin: 0;
+  }
+  
+  .listing-card-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px 15px;
+  }
+  
+  .remove-button,
+  .edit-button {
+    flex: 1;
+    margin: 0 5px;
+    padding: 8px 0;
+    font-size: 0.9rem;
+  }
+  
+  .remove-button {
+    background-color: transparent;
+    border: 1px solid #ccc;
+    color: #666;
+  }
+  
+  .edit-button {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+  }

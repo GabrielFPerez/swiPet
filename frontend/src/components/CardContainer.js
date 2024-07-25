@@ -4,8 +4,9 @@ import PetCard from './PetCard';
 import SearchForm from './SearchForm';
 import '../styles/CardContainer.css';
 import { ReactComponent as Undo } from '../icons/undo.svg';
-import { jwtDecode } from "jwt-decode";
 import { retrieveToken, storeToken } from '../tokenStorage.js';
+import { ReactComponent as Search } from '../icons/search.svg';
+ 
 
 const CardContainer = () => {
     const [pets, setPets] = useState([]);
@@ -21,8 +22,6 @@ const CardContainer = () => {
     });
     const [showSearchPopup, setShowSearchPopup] = useState(false);
     const navigate = useNavigate();
-    let search;
-
     var bp = require('./Path.js');
     
     useEffect(() => {
@@ -35,10 +34,10 @@ const CardContainer = () => {
             return;
         }
 
-        fetchPets();
+        fetchPets(searchCriteria);
     }, [navigate]);
 
-    const fetchPets = async () => {
+    const fetchPets = async (criteria) => {
         let token = retrieveToken();
         console.log("Token in fetchPets:", token);
         
@@ -55,7 +54,7 @@ const CardContainer = () => {
 
         let obj = {
             userLogin: username, 
-            ...searchCriteria,  
+            ...criteria,  
             jwtToken: token
         }
         
@@ -103,6 +102,12 @@ const CardContainer = () => {
             console.error('Error fetching pets:', error.message);
             setPets([]);
         }
+    };
+
+    const handleSearch = (criteria) => {
+        setSearchCriteria(criteria);
+        fetchPets(criteria);  // Use the new criteria immediately
+        setShowSearchPopup(false);
     };
 
     const handleFavorite = async (petId) => {
@@ -223,14 +228,12 @@ const CardContainer = () => {
         }
     };
 
-    const handleSearch = (criteria) => {
-        setSearchCriteria(criteria);
-        fetchPets();
-    };
+
 
     return (
         <div className="card-container-wrapper">
-            <button onClick={() => setShowSearchPopup(true)}>Search</button>
+            
+            <button className='search-button' onClick={() => setShowSearchPopup(true)}><Search /></button>
             {showSearchPopup && (
                 <SearchForm 
                     onSearch={handleSearch}
@@ -239,13 +242,23 @@ const CardContainer = () => {
             )}
 
             <div className="search-criteria-display">
-                <h3>Search Criteria:</h3>
-                <ul>
+                <div className="entry-container">
                     {Object.entries(searchCriteria).map(([key, value]) => (
-                        value && <li key={key}>{key}: {value}</li>
+                    value && (
+                        Array.isArray(value) ? (
+                        value.map((item, index) => (
+                            <div className="search-entries" key={`${key}-${index}`}>{item}</div>
+                        ))
+                        ) : (
+                        <div className="search-entries" key={key}>{value}</div>
+                        )
+                    )
                     ))}
-                </ul>
+                </div>
+
+                <div className='line'></div>
             </div>
+
 
             <div className="card-container">
                 {pets.length > 0 ? (
@@ -259,7 +272,11 @@ const CardContainer = () => {
                 )}
             </div>
             <div className="undo-button-container">
-                <button onClick={handleUndo} disabled={history.length === 0}>
+                <button onClick={handleUndo} disabled={history.length === 0}
+                style={{
+                    width: '90px', /* Set width */
+                    height: '70px' /* Set height */
+                }}>
                     <Undo style={{ width: '50px', height: '50px' }} />
                 </button>
             </div>

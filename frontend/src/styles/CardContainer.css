@@ -1,4 +1,4 @@
-/* CardContainer.css */
+/* Existing styles */
 
 .search-form {
     margin-bottom: 20px;
@@ -56,6 +56,9 @@
     right: 20px;
     margin-bottom: 200px;
     margin-right: 170px;
+
+    width: 100px;
+    height: 71px;
 }
 
 .undo-button-container button {
@@ -70,10 +73,55 @@
 .undo-button-container button:disabled {
     background-color: none;
     cursor: not-allowed;
+    height: 100px;
 }
 
 .history-container {
     margin-top: 20px;
 }
 
-/* ... (keep other existing styles) */
+.search-entries {
+    padding: 10px;
+    background-color: #F288A44D; /* Bubble background color */
+    border-radius: 100px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add some shadow for a better effect */
+    margin: 5px; /* Optional: Add some margin */
+    max-width: 200px; /* Adjust the width as needed */
+    text-align: center; /* Center the text */
+    font-family: DM Sans;
+    font-weight: 300;
+    font-size: 25px;
+    padding: 10px 40px 10px 40px;
+}
+
+.line {
+    border-bottom: 2px solid #F288A4;
+    width: 95%; /* Ensure the line spans the full width of the container */
+    margin-top: 100px; /* Adjust margin to add space between the line and the search entries */
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
+
+.entry-container {
+
+    width: auto;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 13px;
+    margin-top: 46px;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    flex-direction: row;
+}
+
+.search-button {
+    background-color: transparent;
+    width: fit-content;
+    border-color: transparent;
+    position: absolute;
+    top: 20px; /* Adjust the distance from the top as needed */
+    right: 50px; /* Adjust the distance from the right as needed */
+}
