@@ -808,7 +808,13 @@ exports.setApp = function (app, client) {
 
             // Make sure to get user login so it does not display user's listed pets
             // Make sure the fields are inputted, if not then ignore
-            let search = { Login: { $ne: userLogin }, _id: { $nin: userFavorites }, _id: { $nin: userListings } };
+            let search = { 
+                Login: { $ne: userLogin }, 
+                _id: { 
+                    $nin: [...userFavorites, ...userListings] // Exclude both favorites and user's listings
+                }
+            };
+    
 
             if (type != "") search.Pet_Type = type;
             if (petAge != "") search.Age = petAge;
