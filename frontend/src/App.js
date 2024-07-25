@@ -9,6 +9,8 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import LandingPage from './pages/LandingPage';
 import ProfilePage from './pages/ProfilePage';
 import SwipingPage from './pages/SwipingPage';
+import FavoritesPage from './pages/YourFavoritesPage';
+import ListingsPage from './pages/YourListingsPage';
 
 function App() 
 {
@@ -21,6 +23,8 @@ function App()
         <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/swipe" element={<SwipingPage />} />
+        <Route path="/favorites" element={<FavoritesPage />} />
+        <Route path="/listings" element={<ListingsPage />} />
 
       </Routes>
     </BrowserRouter>
