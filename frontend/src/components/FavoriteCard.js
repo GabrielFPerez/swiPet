@@ -25,10 +25,12 @@ const FavoriteCard = ({ pet, onRemoveFavorite, onSendInquiry, onViewOriginal }) 
     setShowInquireDialog(false);
   };
 
+  const images = pet.Images.slice(0, 3);
+
   return (
     <>
       <div className="favorite-card" onClick={() => onViewOriginal(pet)}>
-        <img src={pet.Images[0]} alt={pet.Pet_Name} className="pet-image" />
+        <img src={`http://localhost:3001/${images[0]}`} alt={pet.Pet_Name} className="pet-image" />
         <div className="pet-info">
           <h3 className="pet-name">{pet.Pet_Name}</h3>
           <p className="pet-details">{pet.Location} | {pet.Age} | {pet.Gender}</p>

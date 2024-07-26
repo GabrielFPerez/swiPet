@@ -70,7 +70,7 @@ const ProfilePage = () => {
   
       if (data) {
         console.log('User data:', data);
-        setUserData(data);
+        setUserData(data.userInfo);
       } else {
         throw new Error('No user data received');
       }
@@ -82,49 +82,47 @@ const ProfilePage = () => {
     }
   };
 
-  const handleUpdateUser = async (updatedData) => {
+  const handleUpdateUser = async (formData) => {
+    console.log("Starting handleUpdateUser");
+    const token = retrieveToken();
+    const ud = JSON.parse(localStorage.getItem('user_data'));
+  
+    // Append additional data
+    formData.append('userLogin', ud.username);
+    formData.append('jwtToken', token);
+  
+    console.log("FormData contents:");
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+  
     try {
-      const token = retrieveToken();
-      const ud = JSON.parse(localStorage.getItem('user_data'));
-
+      console.log("Sending update request to:", bp.buildPath('api/updateUser'));
       const response = await fetch(bp.buildPath('api/updateUser'), {
         method: 'POST',
+        body: formData,
         headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userLogin: ud.username,
-          ...updatedData,
-          jwtToken: token
-        }),
+          'Authorization': `Bearer ${token}`
+        }
       });
-
-      const result = await response.json();
-
-      if (result.message === 'User updated successfully') {
-        // Update the local state with the new data
-        setUserData(prevData => ({
-          ...prevData,
-          ...updatedData,
-           // Ensure address is updated correctly
-        }));
-        storeToken(result.jwtToken);
-        setError(null);
-        setUpdateMessage('Profile updated successfully!');
-        
-        // Update user_data in localStorage
-        const updatedUserData = {
-          ...ud,
-          firstName: updatedData.firstName,
-          lastName: updatedData.lastName
-        };
-        localStorage.setItem('user_data', JSON.stringify(updatedUserData));
-      } else {
-        setError(result.message);
-        setUpdateMessage('');
+  
+      console.log("Response status:", response.status);
+      console.log("Response headers:", Object.fromEntries(response.headers.entries()));
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error response body:", errorText);
+        throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
       }
-    } catch (err) {
-      setError('Failed to update user data');
+  
+      const result = await response.json();
+      console.log("API response:", result);
+  
+      // ... rest of the function remains the same ...
+  
+    } catch (error) {
+      console.error('Error updating user:', error);
+      setError('An error occurred while updating the profile. Please try again.');
       setUpdateMessage('');
     }
   };

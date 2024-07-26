@@ -15,11 +15,12 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
     prompt2: '',
     contactEmail: '',
     location: '',
-    adoptionFee: '',
+    adoptionFee: ''
   });
 
-  const allowedColors = ["Brown", "Black", "White", "Gold", "Gray", "Red", "Yellow", "Blue", "Orange", "Purple", "Green"];
+  const [files, setFiles] = useState([]);
 
+  const allowedColors = ["Brown", "Black", "White", "Gold", "Gray", "Red", "Yellow", "Blue", "Orange", "Purple", "Green"];
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -40,27 +41,36 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
     }));
   };
 
-
   const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-    Promise.all(files.map(file => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }))
-    .then(images => {
-      setPetData({ ...petData, images: [...petData.images, ...images] });
-    });
+    const petImages = Array.from(e.target.files);
+    if (petImages.length > 3) {
+      alert("You can only upload up to 3 images.");
+      return;
+    }
+    setFiles(petImages);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form data being submitted:', petData); // Debugging log
-    onSubmit(petData);
+    const formData = new FormData();
+
+    // Append all pet data to formData
+    Object.keys(petData).forEach(key => {
+      if (key === 'colors') {
+        petData[key].forEach(color => formData.append('colors', color));
+      } else {
+        formData.append(key, petData[key]);
+      }
+    });
+
+    // Append files to formData
+    files.forEach((file, index) => {
+      formData.append(`petImages`, file);
+    });
+
+    onSubmit(formData);
   };
+
 
   const renderPage1 = () => (
     <>
@@ -72,7 +82,7 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
           name="petName"
           value={petData.petName}
           onChange={handleChange}
-          required
+          //required
         />
       </div>
 
@@ -84,7 +94,7 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
           name="type"
           value={petData.type}
           onChange={handleChange}
-          required
+          //required
         />
       </div>
 
@@ -96,7 +106,7 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
           name="petAge"
           value={petData.petAge}
           onChange={handleChange}
-          required
+          //required
         />
       </div>
 
@@ -107,7 +117,7 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
           name="petGender"
           value={petData.petGender}
           onChange={handleChange}
-          required
+          //required
         >
           <option value="">Select Gender</option>
           <option value="Male">Male</option>
@@ -139,7 +149,7 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
           name="breed"
           value={petData.breed}
           onChange={handleChange}
-          required
+          //required
         />
       </div>
 
@@ -150,7 +160,7 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
           name="petSize"
           value={petData.petSize}
           onChange={handleChange}
-          required
+          //required
         >
           <option value="">Select Size</option>
           <option value="Small">Small</option>
@@ -167,7 +177,7 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
           name="contactEmail"
           value={petData.contactEmail}
           onChange={handleChange}
-          required
+          //required
         />
       </div>
 
@@ -179,7 +189,7 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
           name="location"
           value={petData.location}
           onChange={handleChange}
-          required
+          //required
         />
       </div>
 
@@ -191,21 +201,21 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
           name="adoptionFee"
           value={petData.adoptionFee}
           onChange={handleChange}
-          required
+          //required
         />
       </div>
 
       <div className="form-group">
-          <label htmlFor="images">Upload Images:</label>
-          <input
-            type="file"
-            id="images"
-            name="images"
-            onChange={handleImageUpload}
-            multiple
-            accept="image/*"
-          />
-        </div>
+        <label htmlFor="images">Upload Images (up to 3):</label>
+        <input
+          type="file"
+          id="images"
+          name="images"
+          onChange={handleImageUpload}
+          multiple
+          accept="image/*"
+        />
+      </div>
 
         <div className="form-actions">
         <button type="submit" className="submit-btn">Add Pet</button>
@@ -223,7 +233,7 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
           name="bio"
           value={petData.bio}
           onChange={handleChange}
-          required
+          //required
         />
       </div>
 
@@ -234,7 +244,7 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
           name="prompt1"
           value={petData.prompt1}
           onChange={handleChange}
-          required
+          //required
         />
       </div>
 
@@ -245,7 +255,7 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
           name="prompt2"
           value={petData.prompt2}
           onChange={handleChange}
-          required
+          //required
         />
       </div>
     </>

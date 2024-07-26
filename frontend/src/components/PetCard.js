@@ -11,6 +11,7 @@ import { ReactComponent as Ruler } from '../icons/ruler.svg';
 import { ReactComponent as Book } from '../icons/book.svg';
 
 
+
 const PetCard = ({ pet, onFavorite, onDiscard, showButtons = true }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isBioOverflowing, setIsBioOverflowing] = useState(false);
@@ -49,7 +50,7 @@ const PetCard = ({ pet, onFavorite, onDiscard, showButtons = true }) => {
           <div className="left-container">
             <div className="pet-card-image-container">
               <img 
-                src={images[currentImageIndex] || '/api/placeholder/400/300'} 
+                src={`http://localhost:3001/${images[currentImageIndex]}`} 
                 alt={`${pet.Pet_Name} - Image ${currentImageIndex + 1}`} 
                 className="pet-card-image"
               />
