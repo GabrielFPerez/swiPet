@@ -9,7 +9,7 @@ import { ReactComponent as Remove } from '../icons/remove.svg';
 const ListingCard = ({ pet, onRemoveListing, onEditClick, onViewOriginal }) => {
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const [showInquireDialog, setShowInquireDialog] = useState(false);
-  const fallbackImage = 'http://localhost:3001/uploads/nopic.jpg';
+  const fallbackImage = 'https://swipet-becad9ab7362.herokuapp.com/uploads/nopic.jpg';
 
   const handleRemove = () => {
     setShowRemoveDialog(true);
@@ -30,7 +30,7 @@ const ListingCard = ({ pet, onRemoveListing, onEditClick, onViewOriginal }) => {
   return (
     <>
       <div className="listing-card" onClick={() => onViewOriginal(pet)}>
-        <img src={`http://localhost:3001/${images[0]}`} 
+        <img src={`https://swipet-becad9ab7362.herokuapp.com/${images[0]}`} 
                 onError={(e) => e.target.src = fallbackImage} alt={pet.Pet_Name} className="pet-image" />
         
         <div className="listing-card-actions">

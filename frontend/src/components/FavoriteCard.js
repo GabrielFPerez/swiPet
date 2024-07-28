@@ -8,7 +8,7 @@ import { ReactComponent as Remove } from '../icons/remove.svg';
 const FavoriteCard = ({ pet, onRemoveFavorite, onSendInquiry, onViewOriginal }) => {
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const [showInquireDialog, setShowInquireDialog] = useState(false);
-  const fallbackImage = 'http://localhost:3001/uploads/nopic.jpg';
+  const fallbackImage = 'https://swipet-becad9ab7362.herokuapp.com/uploads/nopic.jpg';
 
   const handleRemove = () => {
     setShowRemoveDialog(true);
@@ -33,7 +33,7 @@ const FavoriteCard = ({ pet, onRemoveFavorite, onSendInquiry, onViewOriginal }) 
   return (
     <>
       <div className="favorite-card" onClick={() => onViewOriginal(pet)}>
-        <img src={`http://localhost:3001/${images[0]}`} 
+        <img src={`https://swipet-becad9ab7362.herokuapp.com/${images[0]}`} 
                 onError={(e) => e.target.src = fallbackImage} alt={pet.Pet_Name} className="pet-image" />
         
         

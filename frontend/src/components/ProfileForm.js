@@ -12,6 +12,8 @@ const ProfileForm = ({ initialData, onSubmit, onDeleteAccount }) => {
   });
   const [file, setFile] = useState(null); // Change to null for a single file
 
+  const fallbackImage = 'https://swipet-becad9ab7362.herokuapp.com/uploads/nopic.jpg';
+
   useEffect(() => {
     // Set initial user data
     setUserData(initialData);
@@ -81,7 +83,8 @@ const ProfileForm = ({ initialData, onSubmit, onDeleteAccount }) => {
         <div className='top-bar'>
         
           <div className="current-profile">
-            <div className='circular-container'> <img src={`http://localhost:3001/${userData.userImage}`} /> </div>
+            <div className='circular-container'> <img src={`https://swipet-becad9ab7362.herokuapp.com/${userData.userImage}`} 
+                onError={(e) => e.target.src = fallbackImage}/> </div>
             <div className='profile-names'>
               <p>{initialData.firstName} {initialData.lastName}</p>
             </div>
