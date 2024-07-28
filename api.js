@@ -240,6 +240,7 @@ exports.setApp = function (app, client) {
         const { firstName, lastName, email, phoneNumber, location, userLogin, password, userImage } = req.body;
         let message = '';
         let id = -1;
+        let token = '';
 
         // Forgot to add connection...
         const db = client.db(dbName);
@@ -285,7 +286,7 @@ exports.setApp = function (app, client) {
                 id = result.insertedId;
 
                 // Generate email verification token
-                const token = jwt.sign({ userId: id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+                token = jwt.sign({ userId: id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
                 // Setting up email for sending verification...
                 const transporter = nodemailer.createTransport({
@@ -319,7 +320,7 @@ exports.setApp = function (app, client) {
         }
 
         // probably dont want  to return login and password here...
-        const ret = { message: message }
+        const ret = { message: message, token: token }
         res.status(200).json(ret);
     });
 
