@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import '../styles/ProfileForm.css';
 
-const ProfileForm = ({ initialData, onSubmit }) => {
+const ProfileForm = ({ initialData, onSubmit, onDeleteAccount }) => {
   const [userData, setUserData] = useState({
     firstName: '',
     lastName: '',
@@ -40,7 +41,7 @@ const ProfileForm = ({ initialData, onSubmit }) => {
 
     const formData = new FormData();
 
-    const fieldsToInclude = ['firstName', 'lastName', 'email', 'phoneNumber', 'address', 'userLogin'];
+    const fieldsToInclude = ['firstName', 'lastName', 'email', 'phoneNumber', 'userLogin'];
 
     // Append only the specified fields to formData
     fieldsToInclude.forEach(field => {
@@ -48,6 +49,10 @@ const ProfileForm = ({ initialData, onSubmit }) => {
         formData.append(field, userData[field]);
       }
     });
+
+    if (userData.address) { // Check if the field exists and is not empty
+      formData.append('location', userData.address);
+    }
 
     // Append file to formData
     if (file) {
@@ -68,31 +73,36 @@ const ProfileForm = ({ initialData, onSubmit }) => {
 
   return (
     <div className="profile-container">
-      <div className="current-profile">
-        <h2>Current Profile</h2>
-        <img 
-                src={`http://localhost:3001/${userData.userImage}`}  
-              />
-        <p>First Name: {initialData.firstName}</p>
-        <p>Last Name: {initialData.lastName}</p>
-        <p>Email: {initialData.email}</p>
-        <p>Phone Number: {initialData.phoneNumber}</p>
-        <p>Location: {initialData.address}</p>
-        <p>Username: {initialData.username}</p>
-      </div>
+
+        <h1>{initialData.username}'s Profile</h1>
 
       <form onSubmit={handleSubmit} className="profile-form">
-        <h2>Edit Profile</h2>
 
-        <div className="form-group">
-          <label htmlFor="images">Upload Image</label>
-          <input
-            type="file"
-            id="images"
-            name="images"
-            onChange={handleImageUpload}
-            accept="image/*"
-          />
+        <div className='top-bar'>
+        
+          <div className="current-profile">
+            <div className='circular-container'> <img src={`http://localhost:3001/${userData.userImage}`} /> </div>
+            <div className='profile-names'>
+              <p>{initialData.firstName} {initialData.lastName}</p>
+            </div>
+          </div>
+
+          
+          <div className="form-group">
+            <label htmlFor="images" className="custom-file-upload"
+              > Upload New Photo 
+            </label>
+
+            <input
+              type="file"
+              id="images"
+              name="images"
+              onChange={handleImageUpload}
+              accept="image/*"
+              className="file-input"
+            />
+          </div>
+
         </div>
 
         <div className="form-group">
@@ -118,7 +128,7 @@ const ProfileForm = ({ initialData, onSubmit }) => {
         <div className="form-group">
           <label htmlFor="email">Email:</label>
           <input
-            type="email"
+            type="text"
             id="email"
             name="email"
             value={userData.email || ''}
@@ -128,7 +138,7 @@ const ProfileForm = ({ initialData, onSubmit }) => {
         <div className="form-group">
           <label htmlFor="phoneNumber">Phone Number:</label>
           <input
-            type="tel"
+            type="text"
             id="phoneNumber"
             name="phoneNumber"
             value={userData.phoneNumber || ''}
@@ -139,23 +149,16 @@ const ProfileForm = ({ initialData, onSubmit }) => {
           <label htmlFor="location">Location:</label>
           <input
             type="text"
-            id="location"
-            name="location"
+            id="address"
+            name="address"
             value={userData.address || ''}
             onChange={handleChange}
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="username">Username:</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            value={userData.username || ''}
-            readOnly
-          />
+        <div className="button-container">
+          <button type="button" className="delete-account-btn" onClick={onDeleteAccount}>Delete Account</button>
+          <button className='submit-button' type="submit">Save Changes</button>
         </div>
-        <button type="submit">Update Profile</button>
       </form>
     </div>
   );

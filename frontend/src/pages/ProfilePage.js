@@ -1,15 +1,19 @@
-import NavBar from '../components/LoggedinNavBar'
 import { useNavigate } from 'react-router-dom';
-import FooterLoggedin from '../components/FooterLoggedin'
 import React, { useState, useEffect } from 'react';
 import ProfileForm from '../components/ProfileForm';
 import { retrieveToken, storeToken } from '../tokenStorage.js';
+import Layout from '../components/Layout';
+import '../styles/ProfilePage.css'
+import ConfirmDialogDel from '../components/ConfirmDialogDel.js';
+
 
 const ProfilePage = () => {
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [updateMessage, setUpdateMessage] = useState('');
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [password, setPassword] = useState('');
   
   const navigate = useNavigate();
   var bp = require('../components/Path.js');
@@ -117,9 +121,9 @@ const ProfilePage = () => {
   
       const result = await response.json();
       console.log("API response:", result);
-  
-      // ... rest of the function remains the same ...
-  
+      fetchUserData(ud.username, result.jwtToken);
+
+      
     } catch (error) {
       console.error('Error updating user:', error);
       setError('An error occurred while updating the profile. Please try again.');
@@ -127,21 +131,76 @@ const ProfilePage = () => {
     }
   };
 
+  const deleteUser = async (password) => {
+    console.log("Starting deleteUser");
+    const token = retrieveToken();
+    const ud = JSON.parse(localStorage.getItem('user_data'));
+    let username = ud.username;
+    var obj = { userLogin: username, password: password, jwtToken: token };
+    var js = JSON.stringify(obj);
+
+    try {
+      const response = await fetch(bp.buildPath('api/deleteUser'), {
+          method: 'POST',
+          body: js,
+          headers: { 'Content-Type': 'application/json' }
+      });
+
+      const data = await response.json();
+      console.log(data.message);
+
+      if (response.ok) {
+        localStorage.clear();
+        navigate('/');
+      } else {
+        setError(data.message || 'Failed to delete account');
+      }
+
+    } catch (e) {
+      setError(e.toString());
+    }
+  };
+
+  const handleDeleteAccount = () => {
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = (password) => {
+    console.log("got to confirm delete with password: ", password);
+    deleteUser(password);
+    setIsDeleteDialogOpen(false);
+    setPassword('');
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setIsDeleteDialogOpen(false);
+    setPassword('');
+  };
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="profile-page">
-      <NavBar />
-      <h1>User Profile</h1>
-      {updateMessage && <div className="update-message">{updateMessage}</div>}
-      <ProfileForm
-        initialData={userData}
-        onSubmit={handleUpdateUser}
-      />
+    <Layout>
+      <div className="profile-page">
+        <ProfileForm
+          initialData={userData}
+          onSubmit={handleUpdateUser}
+          onDeleteAccount={handleDeleteAccount}
+        />
 
-      <FooterLoggedin />
-    </div>
+        {updateMessage && <div className="update-message">{updateMessage}</div>}
+        
+        <ConfirmDialogDel
+          isOpen={isDeleteDialogOpen}
+          onClose={handleCloseDeleteDialog}
+          onConfirm={handleConfirmDelete}
+          title="Delete Account"
+          message="Are you sure you want to delete your account? This action cannot be undone."
+        >
+        </ConfirmDialogDel>
+      </div>
+    </Layout>
   );
 };
 

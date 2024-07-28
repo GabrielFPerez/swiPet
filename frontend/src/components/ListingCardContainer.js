@@ -6,7 +6,8 @@ import EditPetForm from './EditPetForm.js';
 import '../styles/ListingCardContainer.css';
 import { useNavigate } from 'react-router-dom';
 import { retrieveToken, storeToken } from '../tokenStorage.js';
-import axios from 'axios';
+import { ReactComponent as Shop} from '../icons/shop.svg';
+import { ReactComponent as Make} from '../icons/make-listing.svg';
 
 const ListingCardContainer = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -73,7 +74,7 @@ const ListingCardContainer = () => {
     }
   };
 
-  const handleEditListing = async (petData) => {
+  const handleEditListing = async (formData) => {
   
     let token = retrieveToken();
     let ud = JSON.parse(localStorage.getItem('user_data'));
@@ -82,14 +83,21 @@ const ListingCardContainer = () => {
     if (!username || !token) {
       return;
     }
+
+    formData.append('userLogin', username);
+    formData.append('jwtToken', token);
+
+    console.log("printing our formData info before updating");
+    for (let key of formData.keys()) {
+      console.log(key, formData.get(key));
+    }
   
     const response = await fetch(bp.buildPath('api/updatepet'), {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ userLogin: username, petId: petData.petId, ...petData, jwtToken: token })
+        body: formData,
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
     });
   
     const data = await response.json();
@@ -99,6 +107,8 @@ const ListingCardContainer = () => {
       localStorage.setItem('jwtToken', data.token);
       token = data.token;
     }
+
+    setShowEditForm(false);
   
     fetchListings(username, token);
   };
@@ -143,6 +153,7 @@ const ListingCardContainer = () => {
   
       if (data.message === "Pet Created") {
         console.log("Pet created successfully. Pet ID:", data.petId);
+        setShowAddPetForm(false);
         fetchListings(username, data.jwtToken || token);
       } else {
         console.error("Failed to create pet:", data.message);
@@ -206,58 +217,64 @@ const ListingCardContainer = () => {
   };
 
   return (
-    <div className="listings-container">
-      <button 
-        className="add-pet-button" 
-        onClick={() => setShowAddPetForm(true)}
-      >
-        Add New Pet
-      </button>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : error ? (
-        <p>Error: {error}</p>
-      ) : listings.length > 0 ? (
-        listings.map(pet => (
-          <ListingCard
-            key={pet._id}
-            pet={pet}
-            onRemoveListing={handleRemoveListing}
-            onEditClick={handleEditClick}
-            onViewOriginal={handleViewOriginal}
-          />
-        ))
-      ) : (
-        <p>No listings found.</p>
-      )}
-      {selectedPet && (
-        <div className="modal-overlay" onClick={handleCloseModal}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <PetCard pet={selectedPet} showButtons={false} />
-          </div>
-        </div>
-      )}
-      {showAddPetForm && (
-        <div className="modal-overlay" onClick={() => setShowAddPetForm(false)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <AddPetForm onSubmit={handleCreateListing} onCancel={() => setShowAddPetForm(false)} />
-          </div>
-        </div>
-      )}
-      {showEditForm && selectedPet && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <EditPetForm
-              pet={selectedPet}
-              onSubmit={handleEditListing}
-              onCancel={() => {
-                setShowEditForm(false);
-                setSelectedPet(null);
-              }}
+    <div className='page-content'>
+      <div className='title' > 
+        <Shop /> Listings
+        <button 
+          className="add-pet-button" 
+          onClick={() => setShowAddPetForm(true)}
+        >
+          <Make />
+        </button>
+
+      </div>
+      <div className="listings-container">
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : error ? (
+          <p>Error: {error}</p>
+        ) : listings.length > 0 ? (
+          listings.map(pet => (
+            <ListingCard
+              key={pet._id}
+              pet={pet}
+              onRemoveListing={handleRemoveListing}
+              onEditClick={handleEditClick}
+              onViewOriginal={handleViewOriginal}
             />
+          ))
+        ) : (
+          <p>No listings found.</p>
+        )}
+        {selectedPet && (
+          <div className="modal-overlay" onClick={handleCloseModal}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+              <PetCard pet={selectedPet} showButtons={false} />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+        {showAddPetForm && (
+          <div className="modal-overlay" onClick={() => setShowAddPetForm(false)}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+              <AddPetForm onSubmit={handleCreateListing} onCancel={() => setShowAddPetForm(false)} />
+            </div>
+          </div>
+        )}
+        {showEditForm && selectedPet && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <EditPetForm
+                pet={selectedPet}
+                onSubmit={handleEditListing}
+                onCancel={() => {
+                  setShowEditForm(false);
+                  setSelectedPet(null);
+                }}
+              />
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

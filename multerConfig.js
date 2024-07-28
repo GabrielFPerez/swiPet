@@ -35,7 +35,7 @@ function checkFileType(file, cb) {
 // Upload for single image
 const uploadSingle = multer({
     storage: storage,
-    limits: { fileSize: 1000000 },
+    limits: { fileSize: 1000000000 },
     fileFilter: function (req, file, cb) {
         checkFileType(file, cb);
     }
@@ -44,7 +44,7 @@ const uploadSingle = multer({
 // Upload for multiple (up to 3) images
 const uploadMultiple = multer({
     storage: storage,
-    limits: { fileSize: 1000000, files: 3 },
+    limits: { fileSize: 1000000000, files: 3 },
     fileFilter: function (req, file, cb) {
         checkFileType(file, cb);
     }

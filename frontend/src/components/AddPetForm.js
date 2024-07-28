@@ -74,58 +74,108 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
 
   const renderPage1 = () => (
     <>
-      <div className="form-group">
-        <label htmlFor="petName">Pet Name:</label>
-        <input
-          type="text"
-          id="petName"
-          name="petName"
-          value={petData.petName}
-          onChange={handleChange}
-          //required
-        />
+      
+      <div className="oneline">
+
+        <div className="input-group">
+          <label htmlFor="petName">Pet Name:</label>
+          <input
+            type="text"
+            id="petName"
+            name="petName"
+            value={petData.petName}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="input-group">
+          <label htmlFor="type">Type:</label>
+          <input
+            type="text"
+            id="type"
+            name="type"
+            value={petData.type}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="input-group">
+          <label htmlFor="breed">Breed:</label>
+          <input
+            type="text"
+            id="breed"
+            name="breed"
+            value={petData.breed}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
       </div>
 
-      <div className="form-group">
-        <label htmlFor="type">Type:</label>
-        <input
-          type="text"
-          id="type"
-          name="type"
-          value={petData.type}
-          onChange={handleChange}
-          //required
-        />
+      <div className="oneline">
+
+        <div className="input-group">
+          <label htmlFor="adoptionFee">Adoption Fee:</label>
+          <input
+            type="number"
+            id="adoptionFee"
+            name="adoptionFee"
+            value={petData.adoptionFee}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        
+        <div className="input-group">
+          <label htmlFor="petSize">Size:</label>
+          <select
+            id="petSize"
+            name="petSize"
+            value={petData.petSize}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Size</option>
+            <option value="Small">Small</option>
+            <option value="Medium">Medium</option>
+            <option value="Large">Large</option>
+          </select>
+        </div>
+
+        <div className="input-group">
+          <label htmlFor="petAge">Age:</label>
+          <input
+            type="text"
+            id="petAge"
+            name="petAge"
+            value={petData.petAge}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="input-group">
+          <label htmlFor="petGender">Gender:</label>
+          <select
+            id="petGender"
+            name="petGender"
+            value={petData.petGender}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+
       </div>
 
-      <div className="form-group">
-        <label htmlFor="petAge">Age:</label>
-        <input
-          type="text"
-          id="petAge"
-          name="petAge"
-          value={petData.petAge}
-          onChange={handleChange}
-          //required
-        />
-      </div>
 
-      <div className="form-group">
-        <label htmlFor="petGender">Gender:</label>
-        <select
-          id="petGender"
-          name="petGender"
-          value={petData.petGender}
-          onChange={handleChange}
-          //required
-        >
-          <option value="">Select Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-        </select>
-      </div>
-
-      <div className="form-group">
+      <div className="input-group">
         <label>Color(s):</label>
         <div className="color-checkboxes">
           {allowedColors.map(color => (
@@ -141,35 +191,7 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
         </div>
       </div>
 
-      <div className="form-group">
-        <label htmlFor="breed">Breed:</label>
-        <input
-          type="text"
-          id="breed"
-          name="breed"
-          value={petData.breed}
-          onChange={handleChange}
-          //required
-        />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="petSize">Size:</label>
-        <select
-          id="petSize"
-          name="petSize"
-          value={petData.petSize}
-          onChange={handleChange}
-          //required
-        >
-          <option value="">Select Size</option>
-          <option value="Small">Small</option>
-          <option value="Medium">Medium</option>
-          <option value="Large">Large</option>
-        </select>
-      </div>
-
-      <div className="form-group">
+      <div className="input-group">
         <label htmlFor="contactEmail">Contact Email:</label>
         <input
           type="email"
@@ -177,15 +199,14 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
           name="contactEmail"
           value={petData.contactEmail}
           onChange={handleChange}
-          //required
+          required
         />
       </div>
 
-      <div className="form-group">
+      <div className="input-group">
         <label htmlFor="location">Location:</label>
         <input
           type="text"
-          id="location"
           name="location"
           value={petData.location}
           onChange={handleChange}
@@ -193,20 +214,8 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
         />
       </div>
 
-      <div className="form-group">
-        <label htmlFor="adoptionFee">Adoption Fee:</label>
-        <input
-          type="number"
-          id="adoptionFee"
-          name="adoptionFee"
-          value={petData.adoptionFee}
-          onChange={handleChange}
-          //required
-        />
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="images">Upload Images (up to 3):</label>
+      <div className="input-group">
+        <label className="custom-file-upload" htmlFor="images">Upload Images (up to 3):</label>
         <input
           type="file"
           id="images"
@@ -214,30 +223,26 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
           onChange={handleImageUpload}
           multiple
           accept="image/*"
+          className="file-input"
         />
-      </div>
-
-        <div className="form-actions">
-        <button type="submit" className="submit-btn">Add Pet</button>
-        
       </div>
     </>
   );
 
   const renderPage2 = () => (
     <>
-      <div className="form-group">
+      <div className="input-group">
         <label htmlFor="bio">Biography:</label>
         <textarea
           id="bio"
           name="bio"
           value={petData.bio}
           onChange={handleChange}
-          //required
+          required
         />
       </div>
 
-      <div className="form-group">
+      <div className="input-group">
         <label htmlFor="bio">Why should you adopt me?</label>
         <textarea
           id="prompt1"
@@ -248,7 +253,7 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
         />
       </div>
 
-      <div className="form-group">
+      <div className="input-group">
         <label htmlFor="bio">My favorite things to do are:</label>
         <textarea
           id="prompt2"
@@ -268,19 +273,25 @@ const AddPetForm = ({ onSubmit, onCancel }) => {
         {currentPage === 1 ? renderPage1() : renderPage2()}
 
         <div className="form-actions">
+          <button type="button" className="cancel-btn" onClick={onCancel}>Cancel</button>
           {currentPage === 1 ? (
-            <button type="button" onClick={() => setCurrentPage(2)}>Next</button>
+            <button className="mov-button" type="button" onClick={() => setCurrentPage(2)}>Next</button>
           ) : (
             <>
-              <button type="button" onClick={() => setCurrentPage(1)}>Previous</button>
+              <button className="mov-button" type="button" onClick={() => setCurrentPage(1)}>Previous</button>
               <button type="submit" className="submit-btn" onClick={handleSubmit} >Add Pet</button>
             </>
           )}
-          <button type="button" className="cancel-btn" onClick={onCancel}>Cancel</button>
         </div>
+
+
+
       </form>
     </div>
   );
 };
 
 export default AddPetForm;
+
+
+        

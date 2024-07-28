@@ -4,6 +4,7 @@ import PetCard from './PetCard';
 import '../styles/FavoriteCardContainer.css';
 import { useNavigate } from 'react-router-dom';
 import { retrieveToken, storeToken } from '../tokenStorage.js';
+import { ReactComponent as Balloon} from '../icons/balloon.svg';
 
 const FavoriteCardContainer = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -166,31 +167,34 @@ const FavoriteCardContainer = () => {
   };
 
   return (
-    <div className="favorites-container">
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : error ? (
-        <p>Error: {error}</p>
-      ) : favorites.length > 0 ? (
-        favorites.map(pet => (
-          <FavoriteCard
-            key={pet._id}
-            pet={pet}
-            onRemoveFavorite={handleRemoveFavorite}
-            onSendInquiry={handleSendInquiry}
-            onViewOriginal={handleViewOriginal}
-          />
-        ))
-      ) : (
-        <p>No favorites found.</p>
-      )}
-      {selectedPet && (
-        <div className="modal-overlay" onClick={handleCloseModal}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <PetCard pet={selectedPet} showButtons={false} />
+    <div className='page-content'>
+      <div className='title' > <Balloon />Likes</div>
+      <div className="favorites-container">
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : error ? (
+          <p>Error: {error}</p>
+        ) : favorites.length > 0 ? (
+          favorites.map(pet => (
+            <FavoriteCard
+              key={pet._id}
+              pet={pet}
+              onRemoveFavorite={handleRemoveFavorite}
+              onSendInquiry={handleSendInquiry}
+              onViewOriginal={handleViewOriginal}
+            />
+          ))
+        ) : (
+          <p>No favorites found.</p>
+        )}
+        {selectedPet && (
+          <div className="modal-overlay" onClick={handleCloseModal}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+              <PetCard pet={selectedPet} showButtons={false} />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

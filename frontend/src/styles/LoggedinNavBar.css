@@ -25,6 +25,7 @@
     border: none;
     cursor: pointer;
   }
+
   
   .navbar-register-button button {
     width: 24px;
@@ -47,6 +48,8 @@
     width: 65px;
     height: 60px;
     padding-left: 90px;
+    cursor: pointer;
+
   }
 
   .navbar-menu-button svg {

@@ -27,7 +27,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   return (
     <div ref={sidebarRef} className={`sidebar ${isOpen ? 'open' : ''}`}>
-      <div className='title'>
+      <div onClick={() => navigate('/')} className='bar-title'>
         <Cat style={{ marginRight: '20px', width: '60px', height: '60px' }} /> SwiPet
       </div>
       <div className='links'>

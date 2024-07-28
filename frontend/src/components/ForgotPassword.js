@@ -1,15 +1,43 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import '../styles/ForgotPassword.css'
 import { ReactComponent as Cat } from '../icons/forgot-password-cat.svg'
+import { retrieveToken } from '../tokenStorage';
 
-function SignUp()
+function Forgot()
 {
+    var bp = require('./Path.js');
+    const [error, setError] = useState('');
 
-    const doLogin = async event => 
+
+    const doForget = async () => 
     {
-        event.preventDefault();
+        const userLogin = document.getElementById('userLogin').value;
+        
+        const email = document.getElementById('email').value;
 
+
+        let obj = {userLogin, email};
+
+        try {
+            const response = await fetch(bp.buildPath('api/forgotPassword'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(obj)
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                //alert('forget successful');
+                window.location.href = '/login';
+            } else {
+                setError('Registration failed: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error during forget password:', error);
+            setError('An error occurred during forget password.');
+        }
         
     };
 
@@ -21,23 +49,19 @@ function SignUp()
                     <span id="inner-title">No Problem!</span><br />
                 </div>
 
+                <div id="userLogin-box">
+                    <span id="Login-title">Login</span><br />
+                    <input type="text" id="userLogin" /><br />
+                </div>
+
                 <div id="email-box">
                     <span id="email-title">Email</span><br />
                     <input type="text" id="email" /><br />
                 </div>
 
-                <div id="password-box">
-                    <span id="newpassword-title">New Password</span><br />
-                    <input type="text" id="password" /><br />
-                </div>
-                
-                <div id="password-box">
-                    <span id="newpassword-title">Confirm Password</span><br />
-                    <input type="password" id="confirmpassword" /><br />
-                </div>
 
                 <input type="submit" id="loginButton" class="buttons" value = "Reset"
-                onClick={doLogin} />
+                onClick={doForget} />
                 <span id="loginResult"></span>
         </div>
 
@@ -46,4 +70,4 @@ function SignUp()
     );
 };
 
-export default SignUp;
+export default Forgot;

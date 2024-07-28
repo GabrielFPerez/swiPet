@@ -16,7 +16,7 @@
     padding: 20px;
     border-radius: 35px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    font-family: DM Sans;
+    font-family: 'DM Sans', sans-serif;
     width: 1120px;
     height: 600px;
     display: flex;
@@ -30,28 +30,35 @@
     gap: 10px;
     margin-bottom: 30px;
     width: 854px;
-
 }
 
-.color-option {
+.color-op {
     display: flex;
     align-items: center;
+    font-size: 16px;
 }
 
 .color-option input[type="checkbox"] {
     margin-right: 5px;
 }
 
-.title {
+.srch-title {
     color: black;
     margin-bottom: 35px;
+    font-weight: 300;
+    font-size: 24px;
 }
 
-.search-form-container input, .search-form-container select, .search-form-container button {
-    font-family: DM Sans;
+.search-form-container input,
+.search-form-container select,
+.search-form-container button {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
 }
 
-.toprow, .bottomrow {
+.toprow,
+.bottomrow {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -63,10 +70,8 @@
     display: flex;
     align-items: center;
     height: 100%;
-    border-top: 2px solid black; /* 2px width, solid style, red color */
+    border-top: 2px solid black;
 }
-
-/* Optional: Add some margin to the buttons for better spacing */
 
 .toprow {
     margin-bottom: 70px;
@@ -77,41 +82,43 @@
     margin-bottom: 70px;
 }
 
-.toprow input, .toprow select, .bottomrow input, .bottomrow select {
+.toprow input,
+.toprow select,
+.bottomrow input,
+.bottomrow select {
     width: 200px;
     border-radius: 10px;
-    border: 1px;
-    padding: 0px, 8px, 0px, 0px;
-    height: 36px;
+    border: 1px solid #ccc;
+    padding: 8px 16px;
+    height: 25px;
+    font-size: 16px;
+    font-weight: 300;
 }
 
-.toprow input[type="text"], .toprow select[type="text"], .bottomrow input[type="text"], .bottomrow select[type="text"] {
-    padding-left: 16px;
-}
-
-select#petSize, select#gender {
-    width: 216px;
-
-}
-
-.toprow select[type="text"], .bottomwrow select[type="text"] {
-    padding: 1px, 2px, 1px, 16px;
-    width: 200px
+select#pSize,
+select#gend {
+    width: 234px;
+    height: 43px;
 }
 
 .placeholder-option {
     color: gray;
 }
 
-button {
+.submit-butt, .close-butt {
     margin: 5px;
     border-radius: 21px;
-    border: 1px;
+    border: none;
     width: 100px;
     height: 41px;
     cursor: pointer;
-
+    background-color: #F288A4;
+    color: white;
+    font-size: 16px;
+    font-weight: 300;
+    transition: background-color 0.3s ease;
 }
 
-
-
+.submit-butt:hover , .close-butt:hover  {
+    background-color: #D6677F; /* Darker shade of #F288A4 */
+}

@@ -40,7 +40,7 @@ const SearchForm = ({ onSearch, onClose }) => {
     return (
         <div className="search-form-overlay">
             <div className="search-form-container">
-            <h1 className='title' >Select your Preferences!</h1>
+            <h1 className='srch-title' >Select your Preferences!</h1>
             <div className='search-fields'>
                 <form onSubmit={handleSubmit}>
                 <div className='toprow'>
@@ -60,11 +60,11 @@ const SearchForm = ({ onSearch, onClose }) => {
                     />
                     <select 
                         type="text"
-                        id="gender"
+                        id="gend"
                         name="petGender"
                         value={searchCriteria.petGender}
                         onChange={handleChange}
-                    >
+                                            >
                         <option value="" disabled>Select a Gender</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
@@ -81,10 +81,11 @@ const SearchForm = ({ onSearch, onClose }) => {
                         />
                         <select
                             type="text"
-                            id="petSize"
+                            id="pSize"
                             name="petSize"
                             value={searchCriteria.petSize}
                             onChange={handleChange}
+                            styles = "height: 43px"
                             
                         >
                             <option value="" disabled>Choose a size</option>
@@ -105,7 +106,7 @@ const SearchForm = ({ onSearch, onClose }) => {
                     <div className="color-select">
                         <label>Colors:</label>
                         {allowedColors.map(color => (
-                            <div key={color} className="color-option">
+                            <div key={color} className="color-op">
                                 <input
                                     type="checkbox"
                                     id={color}
@@ -119,8 +120,8 @@ const SearchForm = ({ onSearch, onClose }) => {
                         ))}
                     </div>
 
-                    <button type="submit">Search</button>
-                    <button type="button" onClick={onClose}>Close</button>
+                    <button className= "close-butt" type="close" onClick={onClose}>Close</button>
+                    <button className= "submit-butt" type="submit">Search</button>
                 </form>
                 </div>
             </div>

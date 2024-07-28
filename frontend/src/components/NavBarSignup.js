@@ -4,8 +4,11 @@ import '../styles/Navbar.css';
 import { ReactComponent as Logo} from '../icons/logo.svg'
 import { ReactComponent as MenuIcon} from '../icons/menu-icon.svg'
 import { ReactComponent as Register} from '../icons/emergency-exit.svg'
+import { useNavigate } from 'react-router-dom';
+
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const goToLoginPage= async event => 
     {
         event.preventDefault();
@@ -22,7 +25,7 @@ const Navbar = () => {
       <div className="navbar-flex">
         
         <div className="navbar-logo">
-          <Logo />
+          <Logo onClick={() => navigate('/')}/>
         </div>
         <div className="create-account">
           <div className="text-wrapper">Login</div>

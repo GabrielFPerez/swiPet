@@ -17,6 +17,7 @@ const PetCard = ({ pet, onFavorite, onDiscard, showButtons = true }) => {
   const [isBioOverflowing, setIsBioOverflowing] = useState(false);
   const bioRef = useRef(null);
   const images = pet.Images.slice(0, 3);
+  const fallbackImage = 'http://localhost:3001/uploads/nopic.jpg';
 
   const goToImage = (index) => {
     setCurrentImageIndex(index);
@@ -51,6 +52,7 @@ const PetCard = ({ pet, onFavorite, onDiscard, showButtons = true }) => {
             <div className="pet-card-image-container">
               <img 
                 src={`http://localhost:3001/${images[currentImageIndex]}`} 
+                onError={(e) => e.target.src = fallbackImage}
                 alt={`${pet.Pet_Name} - Image ${currentImageIndex + 1}`} 
                 className="pet-card-image"
               />

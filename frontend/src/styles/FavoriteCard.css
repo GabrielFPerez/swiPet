@@ -1,89 +1,109 @@
 .favorites-card {
-    position: relative;
-    margin-bottom: 20px;
-  }
-  
-  .favorites-card-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-  }
-  
-  .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-  }
+  position: relative;
+  margin-bottom: 20px;
+}
 
-  .favorite-card {
-    display: flex;
-    flex-direction: column;
-    width: 250px;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: white;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-  
-  .favorite-card:hover {
-    transform: scale(1.05);
-  }
-  
-  .pet-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-  }
-  
-  .pet-info {
-    padding: 15px;
-  }
-  
-  .pet-name {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin: 0 0 5px 0;
-  }
-  
-  .pet-location {
-    font-size: 0.9rem;
-    color: #666;
-    margin: 0 0 5px 0;
-  }
-  
-  .pet-details {
-    font-size: 0.8rem;
-    color: #888;
-    margin: 0;
-  }
-  
-  .favorite-card-actions {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 15px 15px;
-  }
-  
-  .remove-button,
-  .inquire-button {
-    flex: 1;
-    margin: 0 5px;
-    padding: 8px 0;
-    font-size: 0.9rem;
-  }
-  
-  .remove-button {
-    background-color: transparent;
-    border: 1px solid #ccc;
-    color: #666;
-  }
-  
-  .inquire-button {
-    background-color: #4a90e2;
-    color: white;
-    border: none;
-  }
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.favorite-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 245px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  cursor: pointer;
+  transition: transform 0.2s;
+  border: 2px solid #F288A4;
+}
+
+.favorite-card:hover {
+  transform: scale(1.05);
+}
+
+.pet-image {
+  width: 90%;
+  max-width: 200px;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  padding: 12px;
+  border-radius: 30px;
+}
+
+.pet-info {
+  padding: 0px 0px 15px 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -20px; /* Add negative margin to move the pet info up */
+}
+
+.pet-name {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0 0 5px 0;
+}
+
+.pet-location {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0 0 5px 0;
+}
+
+.pet-details {
+  font-size: 0.8rem;
+  color: #888;
+  margin: 0;
+}
+
+.favorite-card-actions {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  bottom: 25px; /* Reduce this value to move the buttons up */
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
+/* Override general button styles for these specific buttons */
+.favorite-card-actions .button {
+  flex: 1;
+  margin: 0 5px;
+  padding: 0;
+  font-size: 0.9rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px; /* Make it fully rounded */
+}
+
+.favorite-card-actions .remove-button {
+  background-color: white !important; /* Use !important to override */
+  border: 1px solid #ccc;
+  color: #F288A4;
+}
+
+.favorite-card-actions .inquire-button {
+  background-color: #F288A4;
+  color: white;
+  border: none;
+}
+
+/* Add hover styles specific to these buttons */
+.favorite-card-actions .remove-button:hover {
+  background-color: #f8f8f8 !important;
+}
+
+.favorite-card-actions .inquire-button:hover {
+  background-color: #e57690;
+}

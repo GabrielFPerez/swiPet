@@ -1,7 +1,7 @@
 .favorites-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 60px;
     padding: 20px;
   }
   
@@ -37,4 +37,16 @@
   
   .close-modal:hover {
     background-color: #e0e0e0;
+  }
+
+  .title {
+    border-bottom: 2px solid #F291A3D6;
+    font-size: 50px;
+    font-weight: 400;
+    font-family: DM Sans;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    padding-bottom: 30px;
+
   }

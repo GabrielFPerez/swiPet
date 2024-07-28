@@ -6,7 +6,7 @@
   height: 500px; /* This ensures the container takes up the full viewport height */
   margin: 0 auto;
   font-family: DM Sans;
-  margin-bottom: 100px;
+  margin-bottom: 0px;
 }
 
 .card-background {

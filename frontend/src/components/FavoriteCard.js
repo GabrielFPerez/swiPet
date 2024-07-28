@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Button } from '../components/Button';
 import '../styles/FavoriteCard.css';
-import ConfirmDialog from './ConfirmDialog';
+import ConfirmDialog from '../components/ConfirmDialog';
+import { ReactComponent as Inquire } from '../icons/inquire.svg';
+import { ReactComponent as Remove } from '../icons/remove.svg';
 
 const FavoriteCard = ({ pet, onRemoveFavorite, onSendInquiry, onViewOriginal }) => {
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
   const [showInquireDialog, setShowInquireDialog] = useState(false);
+  const fallbackImage = 'http://localhost:3001/uploads/nopic.jpg';
 
   const handleRemove = () => {
     setShowRemoveDialog(true);
@@ -30,25 +33,34 @@ const FavoriteCard = ({ pet, onRemoveFavorite, onSendInquiry, onViewOriginal }) 
   return (
     <>
       <div className="favorite-card" onClick={() => onViewOriginal(pet)}>
-        <img src={`http://localhost:3001/${images[0]}`} alt={pet.Pet_Name} className="pet-image" />
-        <div className="pet-info">
-          <h3 className="pet-name">{pet.Pet_Name}</h3>
-          <p className="pet-details">{pet.Location} | {pet.Age} | {pet.Gender}</p>
-        </div>
-        <div className="favorite-card-actions">
-          <Button onClick={(e) => {
-            e.stopPropagation();
-            handleRemove();
-          }} variant="outline" className="remove-button">
-            Remove
-          </Button>
-          <Button onClick={(e) => {
-            e.stopPropagation();
-            handleInquire();
-          }} variant="default" className="inquire-button">
-            Inquire
-          </Button>
-        </div>
+        <img src={`http://localhost:3001/${images[0]}`} 
+                onError={(e) => e.target.src = fallbackImage} alt={pet.Pet_Name} className="pet-image" />
+        
+        
+        
+          <div className="favorite-card-actions">
+
+            <Button onClick={(e) => {
+              e.stopPropagation();
+              handleRemove();
+            }} variant="default" className="remove-button">
+              <Remove />
+            </Button>
+            
+            <Button onClick={(e) => {
+              e.stopPropagation();
+              handleInquire();
+            }} variant="default" className="inquire-button">
+              <Inquire />
+            </Button>
+          
+          </div>
+          
+          <div className="pet-info">
+            <h3 className="pet-name">{pet.Pet_Name}</h3>
+            <p className="pet-details">{pet.Location} • {pet.Age} yrs • {pet.Gender}</p>
+          </div>
+          
       </div>
 
       <ConfirmDialog

@@ -32,7 +32,7 @@ function Login() {
             console.log("Received JWT:", jwtToken);
 
             if (!jwtToken) {
-                throw new Error("No JWT token received");
+                throw new Error("Invalid login password combination");
             }
 
             storeToken(jwtToken);
@@ -58,7 +58,7 @@ function Login() {
             }
         } catch (e) {
             console.error('Login error:', e);
-            setMessage('An error occurred: ' + e.message);
+            setMessage( e.message);
         }
     };
 

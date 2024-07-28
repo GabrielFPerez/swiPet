@@ -3,12 +3,6 @@
     margin-bottom: 20px;
   }
   
-  .listing-card-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-  }
-  
   .overlay {
     position: absolute;
     top: 0;
@@ -21,13 +15,15 @@
   .listing-card {
     display: flex;
     flex-direction: column;
-    width: 250px;
+    align-items: center;
+    width: 245px;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: white;
     cursor: pointer;
     transition: transform 0.2s;
+    border: 2px solid #F288A4;
   }
   
   .listing-card:hover {
@@ -35,17 +31,25 @@
   }
   
   .pet-image {
-    width: 100%;
-    height: 200px;
+    width: 90%;
+    max-width: 200px;
+    height: auto;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
+    padding: 12px;
+    border-radius: 30px;
   }
   
   .pet-info {
-    padding: 15px;
+    padding: 0px 0px 15px 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: -20px; /* Add negative margin to move the pet info up */
   }
   
   .pet-name {
-    font-size: 1.2rem;
+    font-size: 20px;
     font-weight: bold;
     margin: 0 0 5px 0;
   }
@@ -65,25 +69,41 @@
   .listing-card-actions {
     display: flex;
     justify-content: space-between;
-    padding: 10px 15px 15px;
+    position: relative;
+    bottom: 25px; /* Reduce this value to move the buttons up */
+    left: 0;
+    right: 0;
+    z-index: 1;
   }
-  
-  .remove-button,
-  .edit-button {
+
+    /* Override general button styles for these specific buttons */
+  .listing-card-actions .button {
     flex: 1;
     margin: 0 5px;
-    padding: 8px 0;
+    padding: 0;
     font-size: 0.9rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 25px; /* Make it fully rounded */
   }
-  
-  .remove-button {
-    background-color: transparent;
+
+  .listing-card-actions .remove-button {
+    background-color: white !important; /* Use !important to override */
     border: 1px solid #ccc;
-    color: #666;
+    color: #F288A4;
   }
-  
-  .edit-button {
-    background-color: #4a90e2;
+
+  .listing-card-actions .edit-button {
+    background-color: #F288A4;
     color: white;
     border: none;
   }
+
+  /* Add hover styles specific to these buttons */
+  .listing-card-actions .remove-button:hover {
+    background-color: #f8f8f8 !important;
+  }
+
+  .listing-card-actions .edit-button:hover {
+    background-color: #e57690;
+    }

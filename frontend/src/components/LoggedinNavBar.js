@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import '../styles/LoggedinNavBar.css';
+import { useNavigate } from 'react-router-dom';
 import { ReactComponent as Logo } from '../icons/logo.svg';
 import { ReactComponent as MenuIcon } from '../icons/menu-icon.svg';
 import { ReactComponent as Register } from '../icons/emergency-exit.svg';
 import Sidebar from './Sidebar';
 
 const LoggedinNavbar = () => {
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const goToLandingPage = async (event) => {
@@ -26,7 +28,7 @@ const LoggedinNavbar = () => {
               <MenuIcon />
             </button>
           </div>
-          <div className="navbar-logo">
+          <div onClick={() => navigate('/')} className="navbar-logo">
             <Logo />
           </div>
           <div className="create-account">

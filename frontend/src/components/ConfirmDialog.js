@@ -11,8 +11,8 @@ const ConfirmDialog = ({ isOpen, onClose, onConfirm, title, message }) => {
         <h2>{title}</h2>
         <p>{message}</p>
         <div className="confirm-dialog-actions">
-          <Button onClick={onClose} variant="outline">No</Button>
-          <Button onClick={onConfirm} variant="default">Yes</Button>
+          <button className='cancel-but' onClick={onClose} variant="outline">No</button>
+          <button className='del-but' onClick={onConfirm} variant="default">Yes</button>
         </div>
       </div>
     </div>

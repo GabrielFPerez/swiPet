@@ -1,7 +1,7 @@
 .listings-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 60px;
     padding: 20px;
   }
   
@@ -40,18 +40,35 @@
   }
 
   .add-pet-button {
-    position: relative;
-    top: 20px;
-    right: 20px;
+    position: absolute;
+    right: 60px;
+    top: 2px;
     padding: 10px 20px;
-    background-color: #4CAF50;
+    background-color: transparent;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    margin-left: auto;
+    margin-bottom: 19px;
+
+    width: 115px;
+    height: 100px;
   }
   
   .add-pet-button:hover {
-    background-color: #45a049;
+    background-color: #F291A3D6;
+  }
+
+  .title {
+    border-bottom: 2px solid #F291A3D6;
+    font-size: 50px;
+    font-weight: 400;
+    font-family: DM Sans;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+
   }
