@@ -230,16 +230,13 @@ exports.setApp = function (app, client) {
         });
     });
 
-    // Register api
-    // Need to implement password hashing via bcrypt - done
-    // Need to implement email verification - done
-    // No JWT for register, since ya know, register
     app.post("/api/register", async (req, res, next) => {
         // incoming: firstName, lastName, login, password
         // outgoing: message
         const { firstName, lastName, email, phoneNumber, location, userLogin, password, userImage } = req.body;
         let message = '';
         let id = -1;
+        let token = '';
 
         // Forgot to add connection...
         const db = client.db(dbName);
@@ -285,7 +282,7 @@ exports.setApp = function (app, client) {
                 id = result.insertedId;
 
                 // Generate email verification token
-                const token = jwt.sign({ userId: id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+                token = jwt.sign({ userId: id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
                 // Setting up email for sending verification...
                 const transporter = nodemailer.createTransport({
@@ -299,7 +296,7 @@ exports.setApp = function (app, client) {
                 });
 
                 // The email itself
-                const verificationLink = `http://swipet-becad9ab7362.herokuapp.com/api/verifyEmail?token=${token}`;
+                const verificationLink = `https://swipet-becad9ab7362.herokuapp.com/api/verifyEmail?token=${token}`;
                 const mailOptions = {
                     from: process.env.EMAIL_USER,
                     to: email,
@@ -319,7 +316,7 @@ exports.setApp = function (app, client) {
         }
 
         // probably dont want  to return login and password here...
-        const ret = { message: message }
+        const ret = { message: message, token: token }
         res.status(200).json(ret);
     });
 
@@ -397,12 +394,12 @@ exports.setApp = function (app, client) {
                     }
                 });
 
-                const resetLink = `http://swipet-becad9ab7362.herokuapp.com/api/resetPassword?token=${token}`;
+                const resetLink = `https://swipet-becad9ab7362.herokuapp.com/resetPassword?token=${token}`;
                 const mailOptions = {
                     from: process.env.EMAIL_USER,
                     to: email,
                     subject: 'Password Reset for swiPet',
-                    text: `Reset your swiPet account password by clicking on the follow link... ${resetLink}`
+                    text: `Reset your swiPet account password by clicking on the following link... ${resetLink}`
                 };
 
                 await transporter.sendMail(mailOptions);
@@ -417,60 +414,67 @@ exports.setApp = function (app, client) {
         res.status(200).json(ret);
     });
 
-    // Reset password api
     app.post('/api/resetPassword', async (req, res, next) => {
         // incoming: token, newPassword
         // outgoing: message
         const { token, newPassword } = req.body;
         let message = '';
-
+        console.log('Received request to reset password'); // Debug statement
+    
         const db = client.db(dbName);
-
-        // Get token from database
-        const checkToken = await db.collection('PasswordResetTokens').findOne({ token: token });
-
-        if (!checkToken) {
-            let ret = { message: 'Invalid token' };
-            res.status(200).json(ret);
-            return;
-        }
-
-        // Check if token is used
-        if (checkToken.used) {
-            message = 'Token already used';
-        }
-
-        else {
-            try {
+    
+        try {
+            // Get token from database
+            console.log('Fetching token from database'); // Debug statement
+            const checkToken = await db.collection('PasswordResetTokens').findOne({ token: token });
+    
+            if (!checkToken) {
+                console.log('Invalid token'); // Debug statement
+                let ret = { message: 'Invalid token' };
+                res.status(200).json(ret);
+                return;
+            }
+    
+            // Check if token is used
+            if (checkToken.used) {
+                console.log('Token already used'); // Debug statement
+                message = 'Token already used';
+            } else {
+                console.log('Token is valid, proceeding with password reset'); // Debug statement
                 const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
                 const userId = decodedToken.userId;
-
+                console.log('Token decoded, user ID:', userId); // Debug statement
+    
                 // Don't forget to hash new password...
                 const saltRounds = 12;
                 const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
-
+                console.log('New password hashed'); // Debug statement
+    
                 await db.collection('User').updateOne(
                     { _id: new ObjectId(userId) },
                     { $set: { password: hashedPassword } }
                 );
-
+                console.log('User password updated in database'); // Debug statement
+    
                 // Update used to true
                 await db.collection('PasswordResetTokens').updateOne(
                     { token: token },
                     { $set: { used: true } }
                 );
-
+                console.log('Token marked as used'); // Debug statement
+    
                 message = 'Password reset successfully';
-
-            } catch (e) {
-                message = e.toString();
             }
+        } catch (e) {
+            console.error('Error during password reset:', e); // Debug statement
+            message = e.toString();
         }
-
+    
         const ret = { message: message };
         res.status(200).json(ret);
+        console.log('Response sent to client:', ret); // Debug statement
     });
-
+    
     // API to add new pets to specific users and update their listings to reflect the new pet
     app.post('/api/addpet', async (req, res) => {
         // incoming: userLogin, petName, type, petAge, petGender, color, breed, petSize, bio, prompt1, prompt2, contactEmail, location, images, adoptionFee
@@ -775,16 +779,16 @@ exports.setApp = function (app, client) {
 
                             // If images are included, then update, otherwise leave it the same as before
                             // Max of 3 images, will create empty placeholders if less than 3 images are provided
-                            if (req.files) {
+                            if (req.body.imagesChanged === 'true' && req.files && req.files.length > 0) {
                                 let petImages = req.files.map(file => `uploads/${file.filename}`);
                                 while (petImages.length < 3) {
-                                    petImages.push('');
+                                  petImages.push('');
                                 }
                                 updatedPet.Images = petImages;
                                 if (req.files.length > 3) {
-                                    imageMessage = "Only the first 3 images were added.";
+                                  imageMessage = "Only the first 3 images were added.";
                                 }
-                            }
+                              }
 
                             // Makes sure the colors are correct and picked out of the predfined list, then adds to updatedPet
                             const validColors = Array.isArray(colors) ? colors.filter(color => allowedColors.includes(color)) : [];
