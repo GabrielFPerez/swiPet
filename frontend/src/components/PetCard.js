@@ -37,7 +37,7 @@ const PetCard = ({ pet, onFavorite, onDiscard, showButtons = true, isSample = fa
     return () => {
       window.removeEventListener('resize', checkBioOverflow);
     };
-  }, [pet.Bio]);
+  }, [pet.Bio, pet.Prompt1, pet.Prompt2]);
 
   return (
     <div className="pet-card-container">
@@ -105,7 +105,10 @@ const PetCard = ({ pet, onFavorite, onDiscard, showButtons = true, isSample = fa
                 ref={bioRef}
                 className={`pet-card-bio ${isBioOverflowing ? 'scrollable' : ''}`}
               >
-                {pet.Bio}
+                {pet.Bio} <br/><br/>
+                <span className='prompt-bio'>Why you should adopt me:</span><br/> {pet.Prompt1} <br/><br/>
+                <span className='prompt-bio'>My favorite things to do are:</span><br/> {pet.Prompt2}
+
               </p>
             </div>
 
