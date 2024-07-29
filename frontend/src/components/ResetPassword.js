@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import { ReactComponent as Cat } from '../icons/forgot-password-cat.svg'
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ReactComponent as Cat } from '../icons/forgot-password-cat.svg';
 import '../styles/ForgotPassword.css';
-
 
 const ResetPassword = () => {
     const [newPassword, setNewPassword] = useState('');
@@ -13,8 +10,9 @@ const ResetPassword = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-
     const handleResetPassword = async (e) => {
+        e.preventDefault();
+
         var bp = require('./Path.js');
 
         if (newPassword !== confirmPassword) {
@@ -25,8 +23,8 @@ const ResetPassword = () => {
         const urlParams = new URLSearchParams(location.search);
         const token = urlParams.get('token');
 
-        console.log("password:",newPassword);
-        console.log("token:",token);
+        console.log("password:", newPassword);
+        console.log("token:", token);
 
         let obj = {
             token,
@@ -39,18 +37,19 @@ const ResetPassword = () => {
 
         try {
             const response = await fetch(bp.buildPath('api/resetPassword'), {
-              method: 'POST',
-              body: js,
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              }
-      });
+                method: 'POST',
+                body: js,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
 
-            setMessage(response.data.message);
+            let res = await response.json();
+            setMessage(res.message);
+
             if (response.ok) {
                 navigate('/login');
-                
             }
         } catch (error) {
             setMessage('An error occurred while resetting the password');
@@ -58,39 +57,38 @@ const ResetPassword = () => {
     };
 
     return (
-
         <div id="ForgotDiv">
             <div id="forgot-header">
                 <Cat />
                 <span id="inner-title">Reset Your Password!</span>
             </div>
 
-            <div id="userLogin-box">
-                <span id="Login-title">New Password</span><br />
-                <input
+            <form onSubmit={handleResetPassword}>
+                <div id="userLogin-box">
+                    <span id="Login-title">New Password</span><br />
+                    <input
                         type="password"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         required
                     />
-            </div>
+                </div>
 
-            <div id="email-box">
-                <span id="email-title">Confirm Your Password</span><br />
-                <input
+                <div id="email-box">
+                    <span id="email-title">Confirm Your Password</span><br />
+                    <input
                         type="password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
                     />
-            </div>
+                </div>
 
+                <button type="submit" id="loginButton" className="buttons">Reset</button>
+            </form>
 
-            <button type="submit" id="loginButton" class="buttons" value = "Reset"
-            onClick={handleResetPassword} />
-            <span id="loginResult"></span>
-        </div>        
-        
+            <span id="loginResult">{message}</span>
+        </div>
     );
 };
 
