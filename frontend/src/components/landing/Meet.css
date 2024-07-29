@@ -1,0 +1,45 @@
+.Meet {
+    width: 100%;
+    min-height: 1000px; /* Changed to min-height for flexibility */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    padding-top: 90px; /* Add some padding at the top */
+}
+
+
+.meet-text {
+    color: black;
+    text-align: center;
+    font-size: 35px;
+    font-weight: 400;
+    margin-top: 50px; /* Add space between divider and text */
+    max-width: 100%; /* Limit text width for better readability */
+}
+
+.swipet-cont {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 250px;
+    width: 80%;
+    margin-top: 250px
+}
+
+.swipet {
+    border-radius: 11px;
+    align-items: center;
+    flex: 1;
+    background-color: white;
+    color: black;
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    gap: 25px;
+    justify-content: center;
+    height: 260px;
+    width: 238px;
+    padding: 30px, 45px, 30px, 45px;
+
+}

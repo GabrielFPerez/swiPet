@@ -1,0 +1,49 @@
+.Welcome {
+    width: 100%;
+    min-height: 1024px; /* Use viewport height instead of fixed pixel value */
+    background-color: #F288A4;
+    display: flex;
+    justify-content: space-between; /* This will push content to both ends */
+    overflow: hidden; /* Prevent scrolling if image overflows */
+    position: relative; /* For absolute positioning of children */
+}
+
+.welcome-text {
+    font-family: var(--main-font-font-family);    
+    display: flex;
+    flex-direction: column;
+    color: white;
+    text-align: center;
+    padding: 288px 0 0 198px; /* Changed margin to padding */
+    max-width: 50%; /* Limit text width */
+    z-index: 1; /* Ensure text is above the image */
+}
+
+.top-text {
+    font-size: 85px;
+    font-weight: 200;
+}
+
+.bot-text {
+    font-size: 24px;
+    font-weight: 250;
+}
+
+.land-cat {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 60%; /* Adjust this value to control image size */
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    overflow: hidden;
+}
+
+.land-cat img {
+    max-width: none; /* Allow image to be larger than container */
+    height: 100%; /* Make image fill the height of its container */
+    object-fit: cover; /* Maintain aspect ratio while filling container */
+    object-position: right bottom; /* Align image to bottom right */
+}

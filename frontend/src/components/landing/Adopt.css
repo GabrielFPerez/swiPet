@@ -1,0 +1,53 @@
+.Adopt {
+    width: 100%;
+    min-height: 774px; /* Changed to min-height for flexibility */
+    background: linear-gradient(180deg, #F288A4 0%, #FFFFFF 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    padding-top: 20px; /* Add some padding at the top */
+}
+
+.adopt-text {
+    color: white;
+    text-align: center;
+    font-size: 35px;
+    font-weight: 400;
+    margin-top: 50px; /* Add space between divider and text */
+    max-width: 50%; /* Limit text width for better readability */
+}
+
+.ital {
+    font-style: italic;
+}
+
+.mission-box-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 250px;
+    width: 80%;
+    margin-top: 180px
+}
+
+.mission-box {
+    border-radius: 11px;
+    align-items: center;
+    flex: 1;
+    background-color: white;
+    color: black;
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    gap: 25px;
+    justify-content: center;
+    height: 260px;
+    width: 238px;
+    padding: 30px, 45px, 30px, 45px;
+
+}
+
+.mission-text {
+    width: 80%;
+}
