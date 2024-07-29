@@ -38,6 +38,7 @@ const ProfilePage = () => {
   const fetchUserData = async (userLogin, jwtToken) => {
     setIsLoading(true);
     setError(null);
+    jwtToken = retrieveToken();
   
     try {
       if (!userLogin || !jwtToken) {
