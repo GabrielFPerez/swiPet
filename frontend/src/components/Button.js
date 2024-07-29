@@ -5,6 +5,7 @@ export const Button = ({ children, onClick, className, variant }) => (
   <button
     onClick={onClick}
     className={`button ${variant ? `button-${variant}` : ''} ${className}`}
+    aria-label="button for {variant}"
   >
     {children}
   </button>

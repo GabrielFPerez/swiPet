@@ -30,8 +30,8 @@ const ListingCard = ({ pet, onRemoveListing, onEditClick, onViewOriginal }) => {
   return (
     <>
       <div className="listing-card" onClick={() => onViewOriginal(pet)}>
-        <img src={`https://swipet-becad9ab7362.herokuapp.com/${images[0]}`} 
-                onError={(e) => e.target.src = fallbackImage} alt={pet.Pet_Name} className="pet-image" />
+        <img aria-label="pet images from listed pets" src={`https://swipet-becad9ab7362.herokuapp.com/${images[0]}`} 
+                onError={(e) => e.target.src = fallbackImage} alt={`Image of ${pet.Pet_Name}`} className="pet-image" />
         
         <div className="listing-card-actions">
           <Button onClick={(e) => {

@@ -83,7 +83,7 @@ const ProfileForm = ({ initialData, onSubmit, onDeleteAccount }) => {
         <div className='top-bar'>
         
           <div className="current-profile">
-            <div className='circular-container'> <img src={`https://swipet-becad9ab7362.herokuapp.com/${userData.userImage}`} 
+            <div alt="profile-image" className='circular-container'> <img alt="user profile image" src={`https://swipet-becad9ab7362.herokuapp.com/${userData.userImage}`} 
                 onError={(e) => e.target.src = fallbackImage}/> </div>
             <div className='profile-names'>
               <p>{initialData.firstName} {initialData.lastName}</p>
@@ -151,6 +151,7 @@ const ProfileForm = ({ initialData, onSubmit, onDeleteAccount }) => {
         <div className="form-group">
           <label htmlFor="location">Location:</label>
           <input
+            aria-label="area to input user address"
             type="text"
             id="address"
             name="address"

@@ -24,7 +24,7 @@ const LoggedinNavbar = () => {
       <nav className="navbar">
         <div className="navbar-flex">
           <div className="navbar-menu-button">
-            <button onClick={() => toggleSidebar(!isSidebarOpen)}>
+            <button aria-label="open menu button" onClick={() => toggleSidebar(!isSidebarOpen)}>
               <MenuIcon />
             </button>
           </div>
@@ -33,8 +33,8 @@ const LoggedinNavbar = () => {
           </div>
           <div className="create-account">
             <div className="text-wrapper">Logout</div>
-            <button onClick={goToLandingPage}></button>
-            <Register style={{ width: '19px', height: '19px' }} />
+            <button aria-label="logout button" onClick={goToLandingPage}></button>
+            <Register aria-label="logout button" style={{ width: '19px', height: '19px' }} />
           </div>
         </div>
       </nav>

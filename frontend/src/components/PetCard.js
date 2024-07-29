@@ -42,7 +42,7 @@ const PetCard = ({ pet, onFavorite, onDiscard, showButtons = true, isSample = fa
   return (
     <div className="pet-card-container">
       {showButtons && (
-        <Button onClick={onDiscard} variant="outline" className="pet-card-button discard">
+        <Button onClick={onDiscard} variant="outline" className="pet-card-button discard" aria-label="Discard this pet">
           <X className="icon" />
         </Button>
       )}
@@ -114,7 +114,7 @@ const PetCard = ({ pet, onFavorite, onDiscard, showButtons = true, isSample = fa
       </div>
       
       {showButtons && (
-        <Button onClick={onFavorite} variant="default" className="pet-card-button favorite">
+        <Button onClick={onFavorite} variant="default" className="pet-card-button favorite" aria-label="Favorite this pet">
           <Heart className="icon" />
         </Button>
       )}

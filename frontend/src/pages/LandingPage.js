@@ -5,7 +5,6 @@ import Adopt from '../components/landing/Adopt.js';
 import Works from '../components/landing/Works.js';
 import Meet from '../components/landing/Meet.js';
 import SeeApp from '../components/landing/SeeApp.js';
-import { Button } from '../components/Button.js';
 import { useNavigate } from 'react-router-dom';
 import { ReactComponent as Register} from '../icons/emergency-exit.svg'
 

@@ -33,8 +33,8 @@ const FavoriteCard = ({ pet, onRemoveFavorite, onSendInquiry, onViewOriginal }) 
   return (
     <>
       <div className="favorite-card" onClick={() => onViewOriginal(pet)}>
-        <img src={`https://swipet-becad9ab7362.herokuapp.com/${images[0]}`} 
-                onError={(e) => e.target.src = fallbackImage} alt={pet.Pet_Name} className="pet-image" />
+        <img aria-label="pet images from favorited pets"  src={`https://swipet-becad9ab7362.herokuapp.com/${images[0]}`} 
+                onError={(e) => e.target.src = fallbackImage} alt={`Image of ${pet.Pet_Name}`}  className="pet-image" />
         
         
         

@@ -12,7 +12,7 @@
     font-family: var(--main-font-font-family);    
     display: flex;
     flex-direction: column;
-    color: white;
+    color: rgb(255, 255, 255);
     text-align: center;
     padding: 288px 0 0 198px; /* Changed margin to padding */
     max-width: 50%; /* Limit text width */

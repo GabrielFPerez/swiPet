@@ -48,7 +48,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
         <div className="logout">
                 <div className="text-wrapper">Logout</div>
-                <button onClick={() => navigate('/')}></button>
+                <button aria-label="logout button" onClick={() => navigate('/')}></button>
                 <Register style={{ width: '19px', height: '19px' }} />
         </div>
 
