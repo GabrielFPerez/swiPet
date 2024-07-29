@@ -56,6 +56,8 @@ function SignUp() {
             password
         };
 
+        console.log(payload);
+
         try {
             const response = await fetch(bp.buildPath('api/register'), {
                 method: 'POST',
@@ -140,7 +142,7 @@ function SignUp() {
                     <span id="signup-title">Location</span><br />
                     <input 
                         type="text" 
-                        id="location" 
+                        id="address" 
                         value={address} 
                         onChange={(e) => handleChange(setAddress, e.target.value)} 
                     /><br />
