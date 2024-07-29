@@ -19,9 +19,9 @@ function Footer()
             </div>
 
             <div className="right-side-container">
-                <div><span>About us</span></div>
+                <div><span></span></div>
                 <div><a href="https://github.com/GabrielFPerez/swiPet"><span>GitHub</span></a></div>
-                <div><span>Download our app!</span></div>
+                <div><span></span></div>
             </div>
         </div>
     );
