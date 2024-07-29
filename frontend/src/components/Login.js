@@ -26,19 +26,23 @@ function Login() {
                 headers: { 'Content-Type': 'application/json' }
             });
 
-            let res = JSON.parse(await response.text());
-            const { jwtToken } = res;
+            let res = await response.json();
+            const { jwtToken, message } = res;
             
             console.log("Received JWT:", jwtToken);
 
+            if (message) {
+                setMessage(message);
+            }
+
             if (!jwtToken) {
-                throw new Error("Invalid login password combination");
+                throw new Error(message || "Invalid login password combination");
             }
 
             storeToken(jwtToken);
             console.log("Stored token:", jwtToken);
 
-            const decoded = jwtDecode(jwtToken, {complete: true});
+            const decoded = jwtDecode(jwtToken);
             console.log("Decoded JWT:", decoded);
 
             let userID = decoded.userId;
@@ -47,18 +51,18 @@ function Login() {
             let username = decoded.username;
 
             if (userID) {
-                var user = { FirstName: FirstName, LastName: LastName, userID: userID, username: username};
+                var user = { FirstName: FirstName, LastName: LastName, userID: userID, username: username };
                 localStorage.setItem('user_data', JSON.stringify(user));
                 setMessage('');
                 console.log("Login successful, navigating to /swipe");
                 navigate('/swipe');
             } else {
                 console.log("userID is invalid:", userID);
-                setMessage(res.message || 'Login failed');
+                setMessage(message || 'Login failed');
             }
         } catch (e) {
-            console.error('Login error:', e);
-            setMessage( e.message);
+            console.error('Login error:', e.message);
+            setMessage(e.message);
         }
     };
 

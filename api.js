@@ -74,6 +74,8 @@ exports.setApp = function (app, client) {
             ret = { message: message };
         }
 
+        console.log(message);
+
         res.status(200).json(ret);
     });
 
