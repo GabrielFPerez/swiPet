@@ -48,7 +48,7 @@ const ResetPassword = () => {
       });
 
             setMessage(response.data.message);
-            if (response.data.message === 'Password reset successfully') {
+            if (response.ok) {
                 navigate('/login');
                 
             }
@@ -86,7 +86,7 @@ const ResetPassword = () => {
             </div>
 
 
-            <input type="submit" id="loginButton" class="buttons" value = "Reset"
+            <button type="submit" id="loginButton" class="buttons" value = "Reset"
             onClick={handleResetPassword} />
             <span id="loginResult"></span>
         </div>        
