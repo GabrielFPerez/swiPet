@@ -233,7 +233,7 @@ exports.setApp = function (app, client) {
     app.post("/api/register", async (req, res, next) => {
         // incoming: firstName, lastName, login, password
         // outgoing: message
-        const { firstName, lastName, email, phoneNumber, location, userLogin, password, userImage } = req.body;
+        const { firstName, lastName, email, phoneNumber, address, userLogin, password, userImage } = req.body;
         let message = '';
         let id = -1;
         let token = '';
@@ -269,7 +269,7 @@ exports.setApp = function (app, client) {
                     lastName: lastName,
                     email: email,
                     phoneNumber: phoneNumber,
-                    address: location,
+                    address: address,
                     username: userLogin,
                     password: hashedPassword,
                     Favorites: [],
@@ -277,6 +277,8 @@ exports.setApp = function (app, client) {
                     userImage: '',
                     Verified: false
                 };
+
+                console.log(newUser);
 
                 const result = await db.collection('User').insertOne(newUser);
                 id = result.insertedId;
