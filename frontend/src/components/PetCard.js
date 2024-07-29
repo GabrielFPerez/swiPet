@@ -10,14 +10,15 @@ import { ReactComponent as Cake } from '../icons/cake.svg';
 import { ReactComponent as Ruler } from '../icons/ruler.svg';
 import { ReactComponent as Book } from '../icons/book.svg';
 
-
-
-const PetCard = ({ pet, onFavorite, onDiscard, showButtons = true }) => {
+const PetCard = ({ pet, onFavorite, onDiscard, showButtons = true, isSample = false }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isBioOverflowing, setIsBioOverflowing] = useState(false);
   const bioRef = useRef(null);
   const images = pet.Images.slice(0, 3);
-  const fallbackImage = 'https://swipet-becad9ab7362.herokuapp.com/uploads/nopic.jpg';
+  const defaultFallbackImage = 'https://swipet-becad9ab7362.herokuapp.com/uploads/nopic.jpg';
+  const sampleFallbackImage = 'https://swipet-becad9ab7362.herokuapp.com/uploads/petImages-1722035141260-5d077a4f.jpeg';
+  
+  const fallbackImage = isSample ? sampleFallbackImage : defaultFallbackImage;
 
   const goToImage = (index) => {
     setCurrentImageIndex(index);
