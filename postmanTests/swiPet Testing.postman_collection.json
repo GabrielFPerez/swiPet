@@ -1,0 +1,400 @@
+{
+	"info": {
+		"_postman_id": "6777cd1c-b39b-4b4d-830f-ea307ae4c88b",
+		"name": "swiPet Testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37004801",
+		"_collection_link": "https://swipet.postman.co/workspace/Team-Workspace~c569568c-0972-4c53-8114-601a22881aca/collection/37004801-6777cd1c-b39b-4b4d-830f-ea307ae4c88b?action=share&source=collection_link&creator=37004801"
+	},
+	"item": [
+		{
+			"name": "Creates New User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Validate that the response code should be 200\r",
+							"pm.test(\"Response Code should be 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Run validations on response headers like Content-Type\r",
+							"pm.test(\"Content-Type should be JSON\", function () {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body matches string and sets the variable\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(pm.response.text()).to.include(\"Registration successful. Proceed to verify email.\");\r",
+							"    pm.collectionVariables.set('userToken', jsonData.token)\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstName\": \"John\",\r\n  \"lastName\": \"Doe\",\r\n  \"email\": \"gabep927@gmail.com\",\r\n  \"phoneNumber\": \"3475066161\",\r\n  \"location\": \"Somewhere\",\r\n  \"userLogin\": \"JohnnyTest\",\r\n  \"password\": \"test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://swipet-becad9ab7362.herokuapp.com/api/register",
+					"protocol": "https",
+					"host": [
+						"swipet-becad9ab7362",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirms User's Email Verified",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Validate that the response code should be 200\r",
+							"pm.test(\"Response Code should be 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Run validations on response headers like Content-Type\r",
+							"pm.test(\"Content-Type should be JSON\", function () {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"const json = pm.response.json();\r",
+							"\r",
+							"/*pm.test(\"jwtToken and output message should be strings and jwtToken should have property jwtToken\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"jwtToken\");\r",
+							"    pm.expect(jsonData.).to.be.a('string');\r",
+							"    pm.expect(jsonData.message).to.be.a('string');\r",
+							"    pm.collectionVariables.set('token', jsonData.jwtToken)\r",
+							"});*/"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://swipet-becad9ab7362.herokuapp.com/api/verifyEmail?token={{userToken}}",
+					"protocol": "https",
+					"host": [
+						"swipet-becad9ab7362",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"verifyEmail"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "{{userToken}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirms User Can Login",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Validate that the response code should be 200\r",
+							"pm.test(\"Response Code should be 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Run validations on response headers like Content-Type\r",
+							"pm.test(\"Content-Type should be JSON\", function () {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"jwtToken and output message should be strings and jwtToken should have property jwtToken\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"jwtToken\");\r",
+							"    pm.expect(jsonData.jwtToken).to.be.a('string');\r",
+							"    pm.expect(jsonData.message).to.be.a('string');\r",
+							"    pm.collectionVariables.set('token', jsonData.jwtToken)\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userLogin\" : \"JohnnyTest\",\r\n    \"password\" : \"test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://swipet-becad9ab7362.herokuapp.com/api/login",
+					"protocol": "https",
+					"host": [
+						"swipet-becad9ab7362",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirms User Can Add Pet",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Validate that the response code should be 200\r",
+							"pm.test(\"Response Code should be 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Run validations on response headers like Content-Type\r",
+							"pm.test(\"Content-Type should be JSON\", function () {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"const json = pm.response.json();\r",
+							"\r",
+							"pm.test(\"jwtToken and output message should be strings and jwtToken should have property jwtToken to add pet\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"jwtToken\");\r",
+							"    pm.expect(jsonData.jwtToken).to.be.a('string');\r",
+							"    pm.expect(jsonData.message).to.be.a('string');\r",
+							"    pm.collectionVariables.set('petToken', jsonData.jwtToken)\r",
+							"    pm.collectionVariables.set('petId', jsonData.petId)\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userLogin\" : \"JohnnyTest\",\r\n    \"petName\" : \"Charlie\",\r\n    \"type\" : \"Chinchilla\",\r\n    \"petAge\" : \"2\",\r\n    \"petGender\" : \"Male\",\r\n    \"colors\" : \"Black with Spots\",\r\n    \"breed\" : \"long-tailed\",\r\n    \"petSize\" : \"Small\",\r\n    \"bio\" : \"Hes a good Chinchilla\",\r\n    \"contactEmail\" : \"gabep927@gmail.com\",\r\n    \"location\" : \"Florida\",\r\n    \"petImages\" : \"\",\r\n    \"adoptionFee\" : \"10\",\r\n    \"jwtToken\" : \"{{token}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://swipet-becad9ab7362.herokuapp.com/api/addpet",
+					"protocol": "https",
+					"host": [
+						"swipet-becad9ab7362",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"addpet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirms User Can Delete Pet",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Validate that the response code should be 200\r",
+							"pm.test(\"Response Code should be 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Run validations on response headers like Content-Type\r",
+							"pm.test(\"Content-Type should be JSON\", function () {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"const json = pm.response.json();\r",
+							"\r",
+							"pm.test(\"jwtToken and output message should be strings and jwtToken should have property jwtToken to delete pet\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.have.property(\"jwtToken\");\r",
+							"    pm.expect(jsonData.jwtToken).to.be.a('string');\r",
+							"    pm.expect(jsonData.message).to.be.a('string');\r",
+							"    pm.collectionVariables.set('petToken', jsonData.jwtToken)\r",
+							"    pm.collectionVariables.set('petId', jsonData.petId)\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userLogin\" : \"JohnnyTest\",\r\n    \"petId\" : \"{{petId}}\",\r\n    \"jwtToken\" : \"{{token}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://swipet-becad9ab7362.herokuapp.com/api/deletepet",
+					"protocol": "https",
+					"host": [
+						"swipet-becad9ab7362",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"deletepet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deletes Created User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Validate that the response code should be 200\r",
+							"pm.test(\"Response Code should be 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Run validations on response headers like Content-Type\r",
+							"pm.test(\"Content-Type should be JSON\", function () {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Output message matches\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"User deleted\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userLogin\" : \"JohnnyTest\",\r\n    \"password\" : \"test\",\r\n    \"jwtToken\" : \"{{token}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://swipet-becad9ab7362.herokuapp.com/api/deleteUser",
+					"protocol": "https",
+					"host": [
+						"swipet-becad9ab7362",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"deleteUser"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "petToken",
+			"value": ""
+		},
+		{
+			"key": "petId",
+			"value": ""
+		},
+		{
+			"key": "userToken",
+			"value": ""
+		}
+	]
+}
