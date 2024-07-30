@@ -29,7 +29,6 @@ function SignUp() {
         if (email && !validateEmail(email)) errors.push('Invalid email address');
         if (!password) errors.push('Password is required');
         if (password && password.length < 6) errors.push('Password must be at least 6 characters long');
-        if (password !== confirmPassword) errors.push('Passwords do not match');
         setValidationErrors(errors);
         return errors.length === 0;
     };
@@ -56,7 +55,14 @@ function SignUp() {
             password
         };
 
+        console.log(confirmPassword);
+
         console.log(payload);
+
+        if (confirmPassword !== password) {
+            setError("Passwords must match");
+            return;
+        }
 
         try {
             const response = await fetch(bp.buildPath('api/register'), {
