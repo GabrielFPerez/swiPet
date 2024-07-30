@@ -330,6 +330,7 @@ exports.setApp = function (app, client) {
         const db = client.db(dbName);
 
         let message;
+        let status = 'error';
 
         try {
 
@@ -342,6 +343,7 @@ exports.setApp = function (app, client) {
             // Check to see if user is already verified
             if (user.Verified) {
                 message = 'Email already verified';
+                status = 'success'
             }
             else {
                 // Find userId and edit Verified boolean
@@ -352,14 +354,68 @@ exports.setApp = function (app, client) {
                 );
 
                 message = 'Email verified successfully';
+                status = 'success';
             }
 
         } catch (e) {
             message = e.toString();
         }
 
-        const ret = { message: message };
-        res.status(200).json(ret);
+        // HTML response
+    const html = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Email Verification Result</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+                background-color: #f0f0f0;
+            }
+            .container {
+                text-align: center;
+                background-color: white;
+                padding: 2rem;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
+            .success {
+                color: #28a745;
+            }
+            .error {
+                color: #dc3545;
+            }
+            .btn {
+                display: inline-block;
+                padding: 10px 20px;
+                margin-top: 20px;
+                background-color: #007bff;
+                color: white;
+                text-decoration: none;
+                border-radius: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1 class="${status === 'success' ? 'success' : 'error'}">
+                ${status === 'success' ? 'Email Verified!' : 'Verification Failed'}
+            </h1>
+            <p>${message}</p>
+            <a href="https://swipet-becad9ab7362.herokuapp.com/login" class="btn">Go to Login</a>
+        </div>
+    </body>
+    </html>
+    `;
+
+    res.send(html);
     });
 
     // Forgot password api
